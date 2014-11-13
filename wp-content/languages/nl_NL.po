@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2014-08-27 08:23:02+0000\n"
+"PO-Revision-Date: 2014-09-17 06:23:19+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -78,7 +78,7 @@ msgstr "Bitrate"
 
 #: wp-includes/class-wp-editor.php:932
 msgid "Your browser does not support direct access to the clipboard. Please use keyboard shortcuts or your browser&#8217;s edit menu instead."
-msgstr "Uw browser ondersteund geen directe toegang tot het klembord. Gebruik in plaats daar van een toetsenbord sneltoets of uw browsers bewerken menu."
+msgstr "De browser ondersteunt geen directe toegang tot het klembord. Gebruik in plaats daarvan een toetsenbord sneltoets of het bewerken-menu van uw browser."
 
 #: wp-includes/class-wp-editor.php:947
 msgid "Read more..."
@@ -1221,7 +1221,7 @@ msgstr "Een term met deze naam en slug bestaan al binnen deze hi&#235;rarchie."
 
 #: wp-includes/taxonomy.php:2509
 msgid "A term with the name and slug provided already exists."
-msgstr "Een term met deze opgegeven naam en slug bestaan al."
+msgstr "Een term met deze opgegeven naam en slug bestaat al."
 
 #: wp-includes/default-widgets.php:17
 msgid "A list of your site&#8217;s Pages."
@@ -2133,7 +2133,7 @@ msgstr "Verander de tekstrichting van de editor"
 
 #: wp-includes/ms-functions.php:634
 msgid "Site name must be at least 4 characters."
-msgstr "Websitenaam moet minimaal 4 tekens zijn."
+msgstr "Website-naam moet minimaal 4 tekens zijn."
 
 #: wp-includes/ms-functions.php:625
 msgid "Please enter a site name."
@@ -2373,7 +2373,7 @@ msgstr "Startpagina toont"
 
 #: wp-includes/class-wp-customize-manager.php:933
 msgid "Site Title & Tagline"
-msgstr "Websitetitel en ondertitel"
+msgstr "Website-titel en ondertitel"
 
 #: wp-includes/class-wp-customize-manager.php:955
 msgid "Tagline"
@@ -2772,7 +2772,7 @@ msgstr "Mijn websites"
 #: wp-includes/class-wp-customize-manager.php:944
 #: wp-includes/class-wp-xmlrpc-server.php:419
 msgid "Site Title"
-msgstr "Websitetitel"
+msgstr "Website-titel"
 
 #: wp-includes/deprecated.php:2737
 msgid "First Post"
@@ -4076,7 +4076,7 @@ msgstr "Gefeliciteerd! je nieuwe website, %s is bijna klaar."
 
 #: wp-signup.php:704
 msgid "Site registration has been disabled."
-msgstr "Website registratie is uitgeschakeld."
+msgstr "Website-registratie is uitgeschakeld."
 
 #: wp-signup.php:453
 msgid "Gimme a site!"

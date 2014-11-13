@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Administration package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2014-09-04 17:56:57+0000\n"
+"PO-Revision-Date: 2014-09-05 12:26:20+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1081,7 +1081,7 @@ msgstr "Als je versie %s opnieuw moet installeren, kan je dat hier doen of het p
 
 #: wp-admin/update-core.php:161
 msgid "Future security updates will be applied automatically."
-msgstr "Toekomstige beveligingsupdates worden automatisch geïnstalleerd."
+msgstr "Toekomstige beveiligingsupdates worden automatisch geïnstalleerd."
 
 #: wp-admin/update-core.php:339 wp-admin/update-core.php:347
 msgid "Translations"
@@ -3296,7 +3296,7 @@ msgstr "Verwerking van de afbeelding niet mogelijk. Ga terug en probeer opnieuw.
 
 #: wp-admin/maint/repair.php:63
 msgid "The %1$s table is not okay. It is reporting the following error: %2$s. WordPress will attempt to repair this table&hellip;"
-msgstr "De %1$s tabel is niet correct. Het geeft de volgende foutmelding: %2$s. WordPress zal proberen deze tabel te repareren&hellip;\n"
+msgstr "De %1$s tabel is niet correct. Het geeft de volgende foutmelding: %2$s. WordPress zal proberen deze tabel te repareren&hellip;"
 
 #: wp-admin/edit-form-advanced.php:132
 msgid "There is an autosave of this post that is more recent than the version below. <a href=\"%s\">View the autosave</a>"
