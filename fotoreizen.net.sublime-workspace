@@ -1,0 +1,418 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"crimson_",
+				"crimson_textsemibolditalic"
+			],
+			[
+				"cr",
+				"crimson_textroman"
+			],
+			[
+				"font-size",
+				"font-size-adjust"
+			],
+			[
+				"$ma",
+				"$main-blue"
+			],
+			[
+				"ba",
+				"background-color"
+			],
+			[
+				"fig",
+				"figcaption	<figcaption>"
+			],
+			[
+				"border",
+				"border-radius"
+			],
+			[
+				"ch",
+				"chunkfiveroman"
+			],
+			[
+				"font",
+				"font-family"
+			],
+			[
+				"ry",
+				"rhythm"
+			],
+			[
+				"margin",
+				"margin-bottom"
+			],
+			[
+				"padding",
+				"padding-left"
+			],
+			[
+				"dis",
+				"disc"
+			],
+			[
+				"column",
+				"column-span"
+			],
+			[
+				"$",
+				"$main-blue"
+			],
+			[
+				"tex",
+				"text-align"
+			],
+			[
+				"paddin",
+				"padding-bottom:   (property)"
+			],
+			[
+				"rem",
+				"rem-calc"
+			],
+			[
+				"mar",
+				"margin-bottom"
+			],
+			[
+				"bor",
+				"border-radius:   (property)"
+			],
+			[
+				"back",
+				"background-color:   (property)"
+			],
+			[
+				"in",
+				"include"
+			],
+			[
+				"a",
+				"inherit  (value)"
+			],
+			[
+				"link",
+				"link	link - stylesheet"
+			],
+			[
+				"def",
+				"defined"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 87.0,
+		"selected_items":
+		[
+			[
+				"emmt wra",
+				"Emmet: Wrap With Abbreviation"
+			],
+			[
+				"em",
+				"Emmet: Wrap With Abbreviation"
+			],
+			[
+				"ht",
+				"StringEncode: HTML Entitize"
+			],
+			[
+				"str",
+				"StringEncode: HTML Entitize"
+			],
+			[
+				"p",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"pack",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"HT",
+				"HTMLBeautify"
+			],
+			[
+				"pa",
+				"Package Control: List Packages"
+			],
+			[
+				"css",
+				"CSSLint: Run CSSLint"
+			],
+			[
+				"",
+				"Autoprefix CSS"
+			],
+			[
+				"fet",
+				"Fetch: Manage"
+			],
+			[
+				"nettuts",
+				"Preferences: Package Control Settings – User"
+			],
+			[
+				"p\\",
+				"Package Control: Upgrade/Overwrite All Packages"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/Arend/vagrant-local/www/fotoreizen.net/htdocs"
+	],
+	"file_history":
+	[
+		"/Users/Arend/vagrant-local/www/fotoreizen.net/htdocs/travel-theme.fotoreizen.net.sublime-project",
+		"/Volumes/ww-db/dev ww.txt",
+		"/Users/Arend/vagrant-local/www/fotoreizen.net/travel-theme.fotoreizen.net.sublime-project",
+		"/private/etc/hosts",
+		"/Users/Arend/Sites/paulnijgh-pening/index.html",
+		"/Users/Arend/Sites/paulnijgh-pening/sass/screen.scss",
+		"/Users/Arend/Sites/phptut/Vagrantfile",
+		"/Users/Arend/Sites/paulnijgh-pening/.gitignore",
+		"/Users/Arend/Sites/makelaarsite/scss/_settings.scss",
+		"/Users/Arend/Sites/makelaarsite/scss/app.scss",
+		"/Users/Arend/Sites/makelaarsite/bower_components/foundation/js/foundation/foundation.js",
+		"/Users/Arend/Sites/makelaarsite/bower_components/foundation/js/foundation/foundation.topbar.js",
+		"/Users/Arend/Sites/makelaarsite/woningaanbod.html",
+		"/Users/Arend/Sites/makelaarsite/index.html",
+		"/Users/Arend/Sites/makelaarsite/css/app.css",
+		"/Users/Arend/Sites/makelaarsite/woningaanbod,html",
+		"/Users/Arend/Sites/paulnijgh-pening/config.rb",
+		"/Users/Arend/Sites/makelaarsite/test.html",
+		"/Users/Arend/Sites/makelaarsite/Gruntfile.js",
+		"/Users/Arend/Sites/makelaarsite/css/style.css",
+		"/Users/Arend/routes.js",
+		"/etc/hosts",
+		"/Applications/MAMP/conf/apache/extra/httpd-vhosts.conf",
+		"/Users/Arend/Sites/arendhosman.nl/css/screen.css",
+		"/Users/Arend/Sites/arendhosman.nl/index.html",
+		"/Users/Arend/Sites/hsk/conf/config.php",
+		"/Users/Arend/Sites/hsk/form.php",
+		"/Users/Arend/Library/Application Support/Sublime Text 3/Packages/User/Fetch.sublime-settings",
+		"/Users/Arend/Library/Application Support/Sublime Text 3/Packages/User/Package Control.sublime-settings",
+		"/Users/Arend/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/Arend/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"placeh",
+			"fun",
+			"large-4 medium-4 ",
+			"#888",
+			"							<li><label for=\"voornaam\">Voornaam:<input type=\"text\" name=\"voornaam\"></label></li>\n",
+			"<input",
+			"</label>",
+			"h3",
+			"}\n\n\n\n\n@font-face",
+			"\"\"",
+			"=\"\"",
+			"clea",
+			"cle",
+			"h2",
+			"portret-paul-nijgh",
+			"carrie",
+			"portret-paul-nijgh",
+			"3",
+			"url('c",
+			"'c",
+			"<li class=\"prijs\">€ 700,-/mnd.</li>",
+			"	<li class=\"oppervlakte\"><object type=\"image/svg+xml\" data=\"img/icon-item-list-oppervlakte.svg\"></object>3 kamers</li>",
+			"grid",
+			"<li class=\"item large-4 medium-6 small-12 column\">",
+			"<figure class=\"item\">",
+			"<figcaption><ul",
+			"<img src=\"img/huis",
+			"<ul class=\"specifications\">",
+			"<li class=\"kamers\">",
+			"font",
+			"<h2>",
+			"infromatie",
+			"class=\"thumb",
+			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam porttitor nisl urna, id dapibus dolor tincidunt eu. Aliquam ultricies ligula est, eu tincidunt nibh sodales a.",
+			"straatnaam 32a",
+			"class=\"thumb\">",
+			"<img src=\"huis",
+			"<img src=\"huis-",
+			"<img src=\"\"",
+			"top-ba",
+			"butt",
+			"border",
+			"secondary-color",
+			"button-function-factor",
+			"button",
+			"grid",
+			"small",
+			"color",
+			"padd",
+			"button",
+			"large",
+			"colums",
+			"large",
+			"submit",
+			"minimumprijs",
+			"plaats",
+			"baner",
+			"hero",
+			"lighthouse",
+			"lighthouse-landscape",
+			"Typography",
+			"class=\"active\"",
+			"arp",
+			"STR_ENVIRONTMENT_NAME"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"}\n\n@font-face",
+			"url('../fonts/c",
+			"'../fonts/c"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 39.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.csslint_result_view":
+	{
+		"height": 100.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.xdebug":
+	{
+		"height": 0.0
+	},
+	"project": "fotoreizen.net.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 450.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

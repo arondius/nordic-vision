@@ -1,0 +1,16 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "."
+		}
+	],
+	"settings":
+	{        		
+        		"xdebug": 
+        		{
+             		"url": "http://fotoreizen.net.dev/",
+        		}
+    	}
+}
