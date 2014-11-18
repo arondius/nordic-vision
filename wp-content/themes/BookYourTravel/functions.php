@@ -30,7 +30,7 @@
  */
  
 if ( ! defined( 'BOOKYOURTRAVEL_VERSION' ) )
-    define( 'BOOKYOURTRAVEL_VERSION', '5.00' );
+    define( 'BOOKYOURTRAVEL_VERSION', '5.20' );
 
 if ( ! defined( 'BOOKYOURTRAVEL_FRONTEND_SUBMIT_ROLE' ) )
     define( 'BOOKYOURTRAVEL_FRONTEND_SUBMIT_ROLE', 'byt_frontend_contributor' );
@@ -135,6 +135,7 @@ require_once get_byt_file_path('/includes/classes/cabin_type.class.php');
 /*-----------------------------------------------------------------------------------*/
 /*	Load Widgets, Shortcodes, Metaboxes & Plugins
 /*-----------------------------------------------------------------------------------*/
+require_once get_byt_file_path('/plugins/widgets/widget-search.php');
 require_once get_byt_file_path('/plugins/widgets/widget-address.php');
 require_once get_byt_file_path('/plugins/widgets/widget-social.php');
 require_once get_byt_file_path('/plugins/widgets/widget-home-feature.php');

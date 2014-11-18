@@ -4,6 +4,7 @@ global $wpdb;
 /*-----------------------------------------------------------------------------------*/
 /*	Load Post Type Files
 /*-----------------------------------------------------------------------------------*/
+require_once get_byt_file_path( '/includes/post_types/search.php' );
 require_once get_byt_file_path( '/includes/post_types/locations.php' );
 require_once get_byt_file_path( '/includes/post_types/reviews.php' );
 require_once get_byt_file_path( '/includes/post_types/car_rentals.php' );
@@ -47,27 +48,30 @@ function remove_unnecessary_meta_boxes() {
 
 add_action( 'manage_posts_custom_column', 'populate_columns' );
 function populate_columns( $column ) {
+
 	$enable_accommodations = of_get_option('enable_accommodations', 1);
 	$enable_reviews = of_get_option('enable_reviews', 1);
 	$enable_car_rentals = of_get_option('enable_car_rentals', 1);
 
     if ( 'location_country' == $column ) {
-        $location_country = esc_html( get_post_meta( get_the_ID(), 'location_country', true ) );
-        echo $location_country;
-    } else if ( 'accommodation_location_post_id' == $column && $enable_accommodations ) {
+        $location_country = get_post_meta( get_the_ID(), 'location_country', true ) ;
+		echo $location_country;		
+    } elseif ( 'accommodation_location_post_id' == $column && $enable_accommodations ) {
         $location_post_id = get_post_meta( get_the_ID(), 'accommodation_location_post_id', true );
 		$location = get_post($location_post_id);
-        echo $location->post_title;
-    } else if ( 'car_rental_location_post_id' == $column && $enable_car_rentals) {
+		if ($location)
+			echo $location->post_title;
+    } elseif ( 'car_rental_location_post_id' == $column && $enable_car_rentals) {
         $location_post_id = get_post_meta( get_the_ID(), 'car_rental_location_post_id', true );
 		$location = get_post($location_post_id);
-        echo $location->post_title;
-	} else if ( 'review_post_id' == $column && $enable_reviews) {
+		if ($location)
+			echo $location->post_title;
+	} elseif ( 'review_post_id' == $column && $enable_reviews) {
 		$review_post_id = get_post_meta( get_the_ID(), 'review_post_id', true );
 		$reviewed_post = get_post($review_post_id);
 		if ($reviewed_post)
 			echo $reviewed_post->post_title;
-	} 
+	}
 }
 
 function initialize_post_types() {
@@ -137,50 +141,39 @@ function byt_handle_post_delete( $post_id ){
         
 		$reviewed_post_id = get_post_meta($post_id, 'review_post_id', true);
 		$review_post = get_post($reviewed_post_id);
-
-		$review_score = get_post_meta($reviewed_post_id, 'review_score', true);
-		$review_sum_score = get_post_meta($reviewed_post_id, 'review_sum_score', true);
-		$review_count = get_post_meta($reviewed_post_id, 'review_count', true);
-
-		$review_score = $review_score ? $review_score : 0;
-		$review_sum_score = $review_sum_score ? $review_sum_score : 0;
-		$review_count = $review_count ? $review_count : 0;					
-		$review_count = $review_count-1;	
 		
-		$review_fields_str = "";
-		if ($review_post->post_type == 'accommodation' || 
-			$review_post->post_type == 'tour' || 
-			$review_post->post_type == 'cruise') {
-			
-			$new_score_sum = 0;
-			$review_fields = list_review_fields($review_post->post_type, false);
-			foreach ($review_fields as $field) {
-				$field_id = $field['id'];
-				$new_score_sum += get_post_meta($post_id, $field_id, true);
-				$review_fields_str .= "'$field_id', ";
-			}
+		$old_review_score = floatval(get_post_meta($reviewed_post_id, 'review_score', true));
+		$old_review_score = $old_review_score ? $old_review_score : 0;
+
+		$old_review_sum_score = floatval(get_post_meta($reviewed_post_id, 'review_sum_score', true));
+		$old_review_sum_score = $old_review_sum_score ? $old_review_sum_score : 0;
+
+		$old_review_count = intval(get_post_meta($reviewed_post_id, 'review_count', true));
+		$old_review_count = $old_review_count ? $old_review_count : 0;					
+		
+		$new_review_count = $old_review_count - 1;
+		$new_review_count = $new_review_count < 0 ? 0 : $new_review_count;
+		
+		$new_score_sum = 0;
+		$review_fields = list_review_fields($review_post->post_type);
+		foreach ($review_fields as $field) {
+			$field_id = $field['id'];
+			$field_value = get_post_meta($post_id, $field_id, true);
+			$new_score_sum += intval($field_value);
 		}
+			
+		$new_score_sum = $old_review_sum_score - $new_score_sum;
+		$new_score_sum = $new_score_sum > 0 ? $new_score_sum : 0;
+		
+		if ($new_review_count > 0) {
+			$new_review_score = $new_score_sum / (count($review_fields) * 10);
+			$new_review_score = ($old_review_score - $new_review_score) / $new_review_count;
+		} else
+			$new_review_score = 0;
 					
-		$review_sum_score = $review_sum_score - $new_score_sum;
-		if ($review_sum_score < 0)
-			$review_sum_score = 0;
-		
-		if ($review_count > 0) 
-			$review_score = ($review_sum_score / $review_count) / 70;
-		else
-			$review_score = 0;
-					
-		update_post_meta($reviewed_post_id, 'review_count', $review_count);
-		update_post_meta($reviewed_post_id, 'review_sum_score', $review_sum_score);
-		update_post_meta($reviewed_post_id, 'review_score', $review_score);					
-		
-		$review_fields_str = rtrim($review_fields_str, ', ');
-		
-		$sql = "DELETE FROM $wpdb->postmeta 
-				WHERE post_id = %d AND meta_key IN ($review_fields_str) ";
-		
-		$sql = $wpdb->prepare($sql, $post_id);
-		$wpdb->query($sql);		
+		update_post_meta($reviewed_post_id, 'review_sum_score', $new_score_sum);
+		update_post_meta($reviewed_post_id, 'review_score', $new_review_score);					
+		update_post_meta($reviewed_post_id, 'review_count', $new_review_count);	
     }
 }
 

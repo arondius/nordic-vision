@@ -47,7 +47,7 @@ class Frontend_Submit {
 		add_action( 'init', array( $this, 'action_init' ) );
 	
 		$this->allowed_mime_types = function_exists( 'wp_get_mime_types' ) ? wp_get_mime_types() : get_allowed_mime_types();
-		$this->manage_permissions = 'edit_posts';
+		$this->manage_permissions = 'read';
 		$this->_html_helper = new Html_Helper();		
 
 	}
@@ -163,6 +163,10 @@ class Frontend_Submit {
 	 */
 	function _is_public() {
 		return of_get_option('publish_frontend_submissions_immediately') && current_user_can( $this->manage_permissions );
+	}
+	
+	function _is_demo() {
+		return defined('BYT_DEMO');
 	}
 	
 	/**
@@ -422,6 +426,10 @@ class Frontend_Submit {
 						
 						$start_date = isset( $_POST['start_date'] ) ? sanitize_text_field( $_POST['start_date'] ) : '';
 						$end_date = isset( $_POST['end_date'] ) ? sanitize_text_field( $_POST['end_date'] ) : '';
+						
+						$start_date = date('Y-m-d', strtotime($start_date));
+						$end_date = date('Y-m-d', strtotime($end_date));
+						
 						$room_type_id = isset( $_POST['room_type_id'] ) ? intval( $_POST['room_type_id'] ) : 0;
 						$room_count = isset( $_POST['room_count'] ) ? intval( $_POST['room_count'] ) : '';
 						$price_per_day = isset( $_POST['price_per_day'] ) ?  sanitize_text_field ( $_POST['price_per_day'] ) : 0;
@@ -465,6 +473,7 @@ class Frontend_Submit {
 	 * Handle post+media upload
 	 */
 	function upload_content() {
+	
 		$result = array();
 
 		// Bail if something fishy is going on
@@ -482,15 +491,20 @@ class Frontend_Submit {
 		elseif ( $_POST['content_type'] == 'vacancy' )
 			$this->_initialize_vacancy_fields();			
 		
-		$result = $this->_upload_entry();
-		
-		if ( $_POST['content_type'] == 'accommodation' || $_POST['content_type'] == 'room_type' ) {
-			if ( ! is_wp_error( $result['entry_id'] ) ) {
-				$media_result = $this->_upload_files( $result['entry_id'], 'featured_image', true );
-				$result['media_ids'] = $media_result['media_ids'];
-				$result['success'] = $media_result['success'];
-				$result['errors'] = array_merge( $result['errors'], $media_result['errors'] );
-			}
+			
+		if (!$this->_is_demo()) {		
+			$result = $this->_upload_entry();
+			
+			if ( $_POST['content_type'] == 'accommodation' || $_POST['content_type'] == 'room_type' ) {
+				if ( ! is_wp_error( $result['entry_id'] ) ) {
+					$media_result = $this->_upload_files( $result['entry_id'], 'featured_image', true );
+					$result['media_ids'] = $media_result['media_ids'];
+					$result['success'] = $media_result['success'];
+					$result['errors'] = array_merge( $result['errors'], $media_result['errors'] );
+				}
+			}			
+		} else {
+			$result = array( 'success' => true, 'entry_id' => 0, 'errors' => array(), 'content_type' => $_POST['content_type'] );
 		}
 
 		/**
@@ -600,26 +614,30 @@ class Frontend_Submit {
 		if ( empty( $res ) )
 			return;
 
+		$map_prefix = '';
+		if ($this->_is_demo()) 
+			$map_prefix = 'If this were not a demo, the message would read: ';
+			
 		$output = '';
 		$map = array(
 			'fes-sent' => array(
-				'text' => __( 'Your file was successfully uploaded!', 'bookyourtravel' ),
+				'text' => __( $map_prefix . 'Your file was successfully uploaded!', 'bookyourtravel' ),
 				'class' => 'success',
 			),
 			'fes-accommodation-sent' => array(
-				'text' => __( 'Your accommodation was successfully submitted!', 'bookyourtravel' ),
+				'text' => __( $map_prefix . 'Your accommodation was successfully submitted!', 'bookyourtravel' ),
 				'class' => 'success',
 			),
 			'fes-room_type-sent' => array(
-				'text' => __( 'Your room type was successfully submitted!', 'bookyourtravel' ),
+				'text' => __( $map_prefix . 'Your room type was successfully submitted!', 'bookyourtravel' ),
 				'class' => 'success',
 			),
 			'fes-vacancy-sent' => array(
-				'text' => __( 'Your vacancy was successfully submitted!', 'bookyourtravel' ),
+				'text' => __( $map_prefix . 'Your vacancy was successfully submitted!', 'bookyourtravel' ),
 				'class' => 'success',
 			),
 			'fes-error' => array(
-				'text' => __( 'There was an error with your submission', 'bookyourtravel' ),
+				'text' => __( $map_prefix . 'There was an error with your submission', 'bookyourtravel' ),
 				'class' => 'failure',
 			),
 		);

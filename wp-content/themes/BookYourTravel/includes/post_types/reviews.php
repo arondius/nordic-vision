@@ -37,6 +37,65 @@ function bookyourtravel_register_review_post_type() {
 	register_post_type( 'review', $args );	
 }
 
+function recalculate_review_scores($post_type) {
+	
+	global $wpdb;
+	
+	$review_fields = list_review_fields($post_type);
+	$review_fields_count = count($review_fields);
+
+	if ( $review_fields_count > 0 ) {
+	
+		$sql = "SELECT 	ID
+				FROM 	$wpdb->posts as posts
+				WHERE 	posts.post_type = '$post_type' AND 
+						posts.post_status = 'publish'";
+		
+		$posts = $wpdb->get_results($sql);
+		
+		foreach ($posts as $post) {
+		
+			$reviewed_post_id = $post->ID;
+			
+			$sql = "SELECT ID
+					FROM $wpdb->posts as posts
+					INNER JOIN $wpdb->postmeta as meta ON posts.ID = meta.post_id AND meta.meta_key = 'review_post_id' AND meta.meta_value=%d 
+					WHERE 	posts.post_type='review' AND 
+							posts.post_status='publish' ";
+					
+			$reviews = $wpdb->get_results($wpdb->prepare($sql, $reviewed_post_id));
+
+			$score_sum = 0;
+			$review_count = 0;
+			$review_score = 0;
+			
+			foreach ($reviews as $review) {		
+			
+				$review_id = $review->ID;
+				
+				foreach ($review_fields as $field) {
+					$field_id = $field['id'];
+					$field_value = get_post_meta($review_id, $field_id, true);
+					$score_sum += intval($field_value);
+				}
+				
+				$review_count += 1;
+				
+				$review_count .= " score_sum $score_sum ";
+			}
+			
+			if ($review_count > 0 ) {
+			
+				$review_score = $score_sum / ($review_fields_count * 10 * $review_count);
+				
+				update_post_meta($reviewed_post_id, 'review_sum_score', $score_sum);
+				update_post_meta($reviewed_post_id, 'review_score', $review_score);					
+				update_post_meta($reviewed_post_id, 'review_count', $review_count);
+			}
+		}
+	}
+}
+
 function list_user_reviews($user_id) {
 	
 	$args = array(
@@ -52,6 +111,7 @@ function list_reviews($post_id, $user_id = null) {
 
 	$args = array(
 	   'post_type' => 'review',
+	   'post_status' => 'publish',
 	   'posts_per_page' => -1,
 	   'meta_query' => array(
 		   array(

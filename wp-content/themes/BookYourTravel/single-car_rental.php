@@ -25,7 +25,12 @@ if ( have_posts() ) {
 	$pick_up_location_title = '';
 	if ($car_rental_location)
 		$pick_up_location_title = $car_rental_location->get_title();
-	
+
+?>
+	<script>
+		window.postType = 'car_rental';
+	</script>
+<?php		
 	get_template_part('includes/parts/inquiry', 'form');
 ?>
 	<!--car rental three-fourth content-->
@@ -55,10 +60,18 @@ if ( have_posts() ) {
 				$i = 0;
 				if (is_array($tab_array) && count($tab_array) > 0) {
 					foreach ($tab_array as $tab) {
+					
 						if (!isset($tab['hide']) || $tab['hide'] != '1') {
+					
+							$tab_label = '';
+							if (isset($tab['label'])) {
+								$tab_label = $tab['label'];
+								$tab_label = get_translated_dynamic_string(get_option_id_context('car_rental_tabs') . ' ' . $tab['label'], $tab_label);
+							}
+						
 							if($i==0)
 								$first_display_tab = $tab['id'];
-							byt_render_tab('car_rental', $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab['label'] . '">' . $tab['label'] . '</a>');
+							byt_render_tab('car_rental', $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab_label . '">' . $tab_label . '</a>');
 						}
 						$i++;
 					}
@@ -83,7 +96,7 @@ if ( have_posts() ) {
 				<?php byt_render_field("transmission", "", __('Transmission', 'bookyourtravel'), ($car_rental_obj->get_custom_field('transmission_type') == 'manual' ? __('Manual', 'bookyourtravel') : __('Automatic', 'bookyourtravel')), '', false, true); ?>
 				<?php byt_render_field("air_conditioned", "", __('Air-conditioned?', 'bookyourtravel'), ($car_rental_obj->get_custom_field('is_air_conditioned') ? __('Yes', 'bookyourtravel') : __('No', 'bookyourtravel')), '', false, true); ?>
 				<?php byt_render_field("unlimited_mileage", "", __('Unlimited mileage?', 'bookyourtravel'), ($car_rental_obj->get_custom_field('is_unlimited_mileage') ? __('Yes', 'bookyourtravel') : __('No', 'bookyourtravel')), '', false, true); ?>
-				<?php byt_render_tab_extra_fields($car_rental_extra_fields, 'description', $car_rental_obj, '', false, true); ?>
+				<?php byt_render_tab_extra_fields('car_rental_extra_fields', $car_rental_extra_fields, 'description', $car_rental_obj, '', false, true); ?>
 				</div>
 				<?php byt_render_link_button("#", "clearfix gradient-button book_car_rental", "", __('Book now', 'bookyourtravel')); ?>				
 			</article>

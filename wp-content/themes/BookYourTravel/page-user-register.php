@@ -128,8 +128,6 @@ if( isset( $_POST['user_login'] ) &&  isset( $_POST['user_email'] ) && isset($_P
 		// insert new user
 		$new_user_id = wp_insert_user( $register_userdata );
 		
-        do_action('user_register', $new_user_id);
-		
 		$new_user = get_userdata( $new_user_id );
 		
 		$user_obj = new WP_User($new_user_id);		
@@ -183,7 +181,7 @@ get_sidebar('under-header');
 			/**
 			 * User activation
 			 */
-				if( byt_activate_user( wp_kses( $_GET['user_id'], '', '' ), wp_kses( $_GET['activation_key'], '', '' ) ) ){
+				if( byt_activate_user( wp_kses( $_GET['user_id'], '' ), wp_kses( $_GET['activation_key'], '' ) ) ){
 
 					?>
 					<p class="success">

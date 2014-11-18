@@ -1,5 +1,20 @@
 <?php
 
+function register_dynamic_string_for_translation($name, $value) {
+	if (function_exists('icl_register_string')) {
+		icl_register_string(__('BookYourTravel Theme'), $name, $value);
+	}
+}
+
+function get_translated_dynamic_string($name, $value) {
+	if (function_exists('icl_t')) {
+		//if ($name == 'Tour tab')
+		//	echo 'icl_t' . $name . ' ' . $value;
+		return icl_t(__('BookYourTravel Theme'), $name, $value);
+	}
+	return $value;
+}
+
 /*
  * Add custom, repeatable input fields to options framework thanks to HelgaTheViking
  * https://gist.github.com/helgatheviking/6022215
@@ -9,7 +24,6 @@ function repeat_tab_option_type( $option_name, $option, $values ){
 	$counter = 0;
 	
 	$default_values = get_default_tab_array($option['id']);
-	
 	if (!is_array( $values ) || count($values) == 0 ) {
 		$values = $default_values;
 	}
@@ -24,11 +38,11 @@ function repeat_tab_option_type( $option_name, $option, $values ){
 				isset($value['id'])) {
 				
 				$output .= '<li class="ui-state-default of-repeat-group">';
-				$output .= '<input class="of-input input-tab-label" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '" type="text" value="' . esc_attr( $value['label'] ) . '" />';
-				$output .= '<input name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][id]' ) . '" type="hidden" value="' . esc_attr( $value['id'] ) . '" />';
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-input input-tab-label" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '" type="text" value="' . esc_attr( $value['label'] ) . '" />';
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="input-tab-id" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][id]' ) . '" type="hidden" value="' . esc_attr( $value['id'] ) . '" />';
 				$output .= '<div class="of-checkbox-wrap">';
-				$output .= '<label class="of-label label-hide-tab" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '">' . __('Is hidden?', 'bookyourtravel') . '</label>';
-				$output .= '<input class="of-checkbox checkbox-hide-tab" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '" type="checkbox" value="1" ' . (isset($value['hide']) && $value['hide'] == '1' ? 'checked' : '') . ' />';
+				$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-hide-tab" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '">' . __('Is hidden?', 'bookyourtravel') . '</label>';
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-checkbox checkbox-hide-tab" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '" type="checkbox" value="1" ' . (isset($value['hide']) && $value['hide'] == '1' ? 'checked' : '') . ' />';
 				$output .= '</div>';
 				if (isset($value['id']) && isset($value['label']) && count(byt_array_search($default_values, 'id', $value['id'])) == 0) {
 					$output .= '<span class="ui-icon ui-icon-close"></span>';
@@ -106,14 +120,14 @@ function repeat_extra_field_option_type( $option_name, $option, $values ){
 					isset($value['id'])) {
 	 
 					$output .= '<li class="ui-state-default of-repeat-group">';
-					$output .= '<input name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][id]' ) . '" type="hidden" value="' . esc_attr( $value['id'] ) . '" />';					
+					$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="input-field-id" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][id]' ) . '" type="hidden" value="' . esc_attr( $value['id'] ) . '" />';					
 					$output .= '<div class="of-input-wrap">';
-					$output .= '<label class="of-label label-field-label" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '">' . __('Field label', 'bookyourtravel') . '</label>';
-					$output .= '<input class="of-input input-field-label" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '" type="text" value="' . esc_attr( $value['label'] ) . '" />';
+					$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-field-label" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '">' . __('Field label', 'bookyourtravel') . '</label>';
+					$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-input input-field-label" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '" type="text" value="' . esc_attr( $value['label'] ) . '" />';
 					$output .= '</div>';
 					$output .= '<div class="of-select-wrap">';
-					$output .= '<label class="of-label label-field-type" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][type]' ) . '">' . __('Field type', 'bookyourtravel') . '</label>';
-					$output .= '<select class="of-select select-field-type" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][type]' ) . '">';
+					$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-field-type" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][type]' ) . '">' . __('Field type', 'bookyourtravel') . '</label>';
+					$output .= '<select data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-select select-field-type" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][type]' ) . '">';
 					
 					foreach($repeatable_field_types as $input_type_key => $input_type_text) {
 						$output .= '<option value="' . $input_type_key . '" ' . ($value['type'] == $input_type_key ? 'selected' : '') . '>' . $input_type_text . '</option>';
@@ -122,8 +136,8 @@ function repeat_extra_field_option_type( $option_name, $option, $values ){
 					$output .= '</select>';
 					$output .= '</div>';
 					$output .= '<div class="of-select-wrap">';
-					$output .= '<label class="of-label label-field-tab" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][tab_id]' ) . '">' . __('Field tab', 'bookyourtravel') . '</label>';
-					$output .= '<select class="of-select select-field-tab" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][tab_id]' ) . '">';
+					$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-field-tab" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][tab_id]' ) . '">' . __('Field tab', 'bookyourtravel') . '</label>';
+					$output .= '<select data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-select select-field-tab" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][tab_id]' ) . '">';
 					foreach($tab_array as $tab) {
 						if (isset($tab['id']) && isset($tab['label'])) {
 							$tab_name = $tab['label'];
@@ -133,8 +147,8 @@ function repeat_extra_field_option_type( $option_name, $option, $values ){
 					}		
 					$output .= '</select>';
 					$output .= '</div>';
-					$output .= '<label class="of-label label-hide-field" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '">' . __('Is hidden?', 'bookyourtravel') . '</label>';
-					$output .= '<input class="of-checkbox checkbox-hide-field" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '" type="checkbox" value="1" ' . (isset($value['hide']) && $value['hide'] == '1' ? 'checked' : '') . ' />';
+					$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-hide-field" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '">' . __('Is hidden?', 'bookyourtravel') . '</label>';
+					$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-checkbox checkbox-hide-field" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '" type="checkbox" value="1" ' . (isset($value['hide']) && $value['hide'] == '1' ? 'checked' : '') . ' />';
 					if (isset($value['id']) && isset($value['label']) && count(byt_array_search($default_values, 'id', $value['id'])) == 0) {
 						$output .= '<span class="ui-icon ui-icon-close"></span>';
 					}
@@ -188,6 +202,18 @@ function repeat_extra_field_option_type( $option_name, $option, $values ){
 }
 add_filter( 'optionsframework_repeat_extra_field', 'repeat_extra_field_option_type', 10, 3 );
 
+function link_button_field_option_type ( $option_name, $option, $values) {
+
+	$output = '<div class="of-input">';
+	$output .= '<a href="#" class="of-button-field ' . $option['id'] . '">' . $option['name'] . '</a>';
+	if ($option['id'] == 'synchronise_reviews' || $option['id'] == 'fix_partial_booking_issue' ) {
+		$output .= '<div style="display:none" class="loading">...</div>';
+	}
+	$output .= '</div>';
+
+	return $output;
+}
+add_filter( 'optionsframework_link_button_field', 'link_button_field_option_type', 10, 3 );
 
 function repeat_review_field_option_type( $option_name, $option, $values ){
 
@@ -218,14 +244,14 @@ function repeat_review_field_option_type( $option_name, $option, $values ){
 				isset($value['id'])) {
  
 				$output .= '<li class="ui-state-default of-repeat-group">';
-				$output .= '<input name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][id]' ) . '" type="hidden" value="' . esc_attr( $value['id'] ) . '" />';					
-				$output .= '<input name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][post_type]' ) . '" type="hidden" value="' . $post_type . '" />';									
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="input-field-id" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][id]' ) . '" type="hidden" value="' . esc_attr( $value['id'] ) . '" />';					
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][post_type]' ) . '" type="hidden" value="' . $post_type . '" />';									
 				$output .= '<div class="of-input-wrap">';
-				$output .= '<label class="of-label label-field-label" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '">' . __('Field label', 'bookyourtravel') . '</label>';
-				$output .= '<input class="of-input input-field-label" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '" type="text" value="' . esc_attr( $value['label'] ) . '" />';
+				$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-field-label" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '">' . __('Field label', 'bookyourtravel') . '</label>';
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-input input-field-label" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][label]' ) . '" type="text" value="' . esc_attr( $value['label'] ) . '" />';
 				$output .= '</div>';
-				$output .= '<label class="of-label label-hide-field" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '">' . __('Is hidden?', 'bookyourtravel') . '</label>';
-				$output .= '<input class="of-checkbox checkbox-hide-field" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '" type="checkbox" value="1" ' . (isset($value['hide']) && $value['hide'] == '1' ? 'checked' : '') . ' />';
+				$output .= '<label data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-label label-hide-field" for="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '">' . __('Is hidden?', 'bookyourtravel') . '</label>';
+				$output .= '<input data-rel="' . esc_attr( $option_name . '[' . $option['id'] . ']' ) . '" class="of-checkbox checkbox-hide-field" name="' . esc_attr( $option_name . '[' . $option['id'] . ']['.$counter.'][hide]' ) . '" type="checkbox" value="1" ' . (isset($value['hide']) && $value['hide'] == '1' ? 'checked' : '') . ' />';
 				if (isset($value['id']) && isset($value['label']) && count(byt_array_search($default_values, 'id', $value['id'])) == 0) {
 					$output .= '<span class="ui-icon ui-icon-close"></span>';
 				}
@@ -256,6 +282,40 @@ function repeat_review_field_option_type( $option_name, $option, $values ){
 }
 add_filter( 'optionsframework_repeat_review_field', 'repeat_review_field_option_type', 10, 3 );
 
+function get_option_id_context($option_id) {
+
+	$option_id_context = '';
+	
+	if ($option_id == 'location_extra_fields')
+		$option_id_context = __('Location extra field', 'bookyourtravel');
+	elseif ($option_id == 'location_tabs')
+		$option_id_context = __('Location tab', 'bookyourtravel');
+	elseif ($option_id == 'accommodation_extra_fields')
+		$option_id_context = __('Accommodation extra field', 'bookyourtravel');
+	elseif ($option_id == 'accommodation_tabs')
+		$option_id_context = __('Accommodation tab', 'bookyourtravel');
+	elseif ($option_id == 'tour_extra_fields')
+		$option_id_context = __('Tour extra field', 'bookyourtravel');
+	elseif ($option_id == 'tour_tabs')
+		$option_id_context = __('Tour tab', 'bookyourtravel');
+	elseif ($option_id == 'car_rental_extra_fields')
+		$option_id_context = __('Car rental extra field', 'bookyourtravel');
+	elseif ($option_id == 'car_rental_tabs')
+		$option_id_context = __('Car rental tab', 'bookyourtravel');
+	elseif ($option_id == 'cruise_extra_fields')
+		$option_id_context = __('Cruise extra field', 'bookyourtravel');
+	elseif ($option_id == 'cruise_tabs')
+		$option_id_context = __('Cruise tab', 'bookyourtravel');
+	elseif ($option_id == 'accommodation_review_fields')
+		$option_id_context = __('Accommodation review field', 'bookyourtravel');
+	elseif ($option_id == 'tour_review_fields')
+		$option_id_context = __('Tour review field', 'bookyourtravel');	
+	elseif ($option_id == 'cruise_review_fields')
+		$option_id_context = __('Cruise review field', 'bookyourtravel');
+		
+	return $option_id_context;
+}
+
 /*
  * Sanitize Repeat review inputs
  */
@@ -268,6 +328,10 @@ function sanitize_repeat_review_field( $fields, $option ){
 				if (!isset($field['id']) && isset($field['label'])) {
 					$field['id'] = 'review_' . URLify::filter($field['label']);
 				}
+				
+				if (isset($field['label']))
+					register_dynamic_string_for_translation(get_option_id_context($option['id']) . ' ' . $field['label'], $field['label']);
+				
 				$results[] = $field;
 			}
 		}
@@ -288,6 +352,10 @@ function sanitize_repeat_extra_field( $fields, $option ){
 				if (!isset($field['id']) && isset($field['label'])) {
 					$field['id'] = URLify::filter($field['label']);
 				}
+					
+				if (isset($field['label']))
+					register_dynamic_string_for_translation(get_option_id_context($option['id']) . ' ' . $field['label'], $field['label']);
+					
 				$results[] = $field;
 			}
 		}
@@ -308,6 +376,10 @@ function sanitize_repeat_tab( $tabs, $option ){
 				if (!isset($tab['id']) && isset($tab['label'])) {
 					$tab['id'] = URLify::filter($tab['label']);
 				}
+				
+				if (isset($tab['label']))
+					register_dynamic_string_for_translation(get_option_id_context($option['id']) . ' ' . $tab['label'], $tab['label']);
+
 				$results[] = $tab;
 			}
 		}
@@ -326,9 +398,102 @@ function of_byt_options_script(){	?>
 	</style>
 
 	<script type="text/javascript">
+	<?php
+		echo '	window.adminAjaxUrl = "' . home_url() . '/wp-admin/admin-ajax.php"';
+	?>	
 	jQuery(function($){
+	
+		$(".synchronise_reviews").on('click', function(e) {
+			
+			var parentDiv = $(this).parent();
+			var loadingDiv = parentDiv.find('.loading');
+			loadingDiv.show();
+			var _wpnonce = jQuery('#_wpnonce').val();
+				
+			var dataObj = {
+					'action':'sync_reviews_ajax_request',
+					'nonce' : _wpnonce }				  
+
+			jQuery.ajax({
+				url: window.adminAjaxUrl,
+				data: dataObj,
+				success:function(json) {
+					// This outputs the result of the ajax request
+					loadingDiv.hide();
+				},
+				error: function(errorThrown){
+					
+				}
+			}); 
+			
+			e.preventDefault();
+		});
+		
+		$(".fix_partial_booking_issue").on('click', function(e) {
+			
+			var parentDiv = $(this).parent();
+			var loadingDiv = parentDiv.find('.loading');
+			loadingDiv.show();
+			var _wpnonce = jQuery('#_wpnonce').val();
+				
+			var dataObj = {
+					'action':'fix_partial_booking_issue_ajax_request',
+					'nonce' : _wpnonce }				  
+
+			jQuery.ajax({
+				url: window.adminAjaxUrl,
+				data: dataObj,
+				success:function(json) {
+					// This outputs the result of the ajax request
+					loadingDiv.hide();
+				},
+				error: function(errorThrown){
+					
+				}
+			}); 
+			
+			e.preventDefault();
+		});
  
- 		$('.of-repeat-review-fields').sortable();
+		$(".of-repeat-review-fields").sortable({
+			update: function(event, ui) {
+				var count = 0;
+				
+				$section = $(this).closest(".section");
+				$tab_loop = $section.find('.of-repeat-review-fields');	
+				$tab_loop.find('.of-repeat-group').each(function (index, element) {
+
+					$this = $(this);
+					
+					if (!$this.hasClass('to-copy')) {						
+					
+						$input_field_id = $this.find('input.input-field-id');
+						input_field_id_name = $input_field_id.attr('data-rel');
+						$input_field_id.attr('name', input_field_id_name + '[' + index + '][id]');
+						
+						$input_field_label = $this.find('input.input-field-label');
+						input_field_label_name = $input_field_label.attr('data-rel');
+						$input_field_label.attr('name', input_field_label_name + '[' + index + '][label]');
+
+						$input_post_type = $this.find('input.input-post-type');
+						input_post_type_name = $input_post_type.attr('data-rel');
+						$input_post_type.attr('name', input_post_type_name + '[' + index + '][post_type]');
+
+						$checkbox_hide_field = $this.find('input.checkbox-hide-field');
+						checkbox_hide_field_name = $checkbox_hide_field.attr('data-rel'); 
+						$checkbox_hide_field.attr('name', checkbox_hide_field_name + '[' + index + '][hide]'); 
+						
+						$label_hide_field = $this.find('label.label-hide-field');
+						label_hide_field_for = checkbox_hide_field_name + '[' + index + '][hide]';
+						$label_hide_field.attr('for', label_hide_field_for);
+						
+					}
+					
+				});
+				
+			}
+		});
+
  
 		$(".docopy_review_field").on("click", function(e){
  
@@ -341,23 +506,23 @@ function of_byt_options_script(){	?>
 		  $group = $to_copy.clone();
 		  $group.removeClass('to-copy');
 		  $group.insertBefore($to_copy);
- 
+
+		  count = $field_loop.children('.of-repeat-group').not('.to-copy').length;
+		  
 		  // the new input
 		  $input_field_label = $group.find('input.input-field-label');
-		  $input_post_type = $group.find('input.input-post-type');
-		  $label_hide_field = $group.find('label.label-hide-field');
-		  $checkbox_hide_field = $group.find('input.checkbox-hide-field');
- 
 		  input_field_label_name = $input_field_label.attr('data-rel');
-		  input_post_type_name = $input_post_type.attr('data-rel');
-		  checkbox_hide_field_name = $checkbox_hide_field.attr('data-rel');
-		  
-		  count = $field_loop.children('.of-repeat-group').not('.to-copy').length;
- 
 		  $input_field_label.attr('name', input_field_label_name + '[' + ( count - 1 ) + '][label]');
-		  $input_post_type.attr('name', input_post_type_name + '[' + ( count - 1 ) + '][post_type]'); 
+		  
+		  $input_post_type = $group.find('input.input-post-type');
+		  input_post_type_name = $input_post_type.attr('data-rel');
+		  $input_post_type.attr('name', input_post_type_name + '[' + ( count - 1 ) + '][post_type]');
+		  
+		  $checkbox_hide_field = $group.find('input.checkbox-hide-field');
+		  checkbox_hide_field_name = $checkbox_hide_field.attr('data-rel'); 
 		  $checkbox_hide_field.attr('name', checkbox_hide_field_name + '[' + ( count - 1 ) + '][hide]'); 
 		  
+		  $label_hide_field = $group.find('label.label-hide-field');
 		  label_hide_field_for = checkbox_hide_field_name + '[' + ( count - 1 ) + '][hide]';
 		  $label_hide_field.attr('for', label_hide_field_for);
 		  
@@ -366,8 +531,53 @@ function of_byt_options_script(){	?>
 		  e.preventDefault();
  
 		});
+	
+		$(".of-repeat-extra-fields").sortable({
+			update: function(event, ui) {
+				var count = 0;
+				
+				$section = $(this).closest(".section");
+				$field_loop = $section.find('.of-repeat-extra-fields');	
+				$field_loop.find('.of-repeat-group').each(function (index, element) {
 
-		$('.of-repeat-extra-fields').sortable();
+					$this = $(this);
+					
+					if (!$this.hasClass('to-copy')) {						
+						$input_field_id = $this.find('input.input-field-id');
+						input_field_id_name = $input_field_id.attr('data-rel');
+						$input_field_id.attr('name', input_field_id_name + '[' + index + '][id]');
+
+						$input_field_label = $this.find('input.input-field-label');
+						input_field_label_name = $input_field_label.attr('data-rel');
+						$input_field_label.attr('name', input_field_label_name + '[' + index + '][label]');
+						$label_field_label = $this.find('label.label-field-label');
+						$label_field_label.attr('for', input_field_label_name + '[' + index + '][label]');
+
+						$select_field_type = $this.find('select.select-field-type');
+						select_field_type_name = $select_field_type.attr('data-rel');
+						$select_field_type.attr('name', select_field_type_name + '[' + index + '][type]'); 
+						$label_field_type = $this.find('label.label-field-type');
+						$label_field_type.attr('for', select_field_type_name + '[' + index + '][type]');
+
+						$select_field_tab = $this.find('select.select-field-tab');
+						select_field_tab_name = $select_field_tab.attr('data-rel');
+						$select_field_tab.attr('name', select_field_tab_name + '[' + index + '][tab_id]'); 
+						$label_field_tab = $this.find('label.label-field-tab');
+						$label_field_tab.attr('for', select_field_tab_name + '[' + index + '][tab_id]');
+
+						$checkbox_hide_field = $this.find('input.checkbox-hide-field');
+						checkbox_hide_field_name = $checkbox_hide_field.attr('data-rel');
+						$checkbox_hide_field.attr('name', checkbox_hide_field_name + '[' + index + '][hide]'); 
+						
+						$label_hide_field = $this.find('label.label-hide-field');
+						label_hide_field_for = checkbox_hide_field_name + '[' + index + '][hide]';
+						$label_hide_field.attr('for', label_hide_field_for);
+					}
+					
+				});
+				
+			}
+		});
  
 		$(".docopy_field").on("click", function(e){
  
@@ -380,26 +590,27 @@ function of_byt_options_script(){	?>
 		  $group = $to_copy.clone();
 		  $group.removeClass('to-copy');
 		  $group.insertBefore($to_copy);
- 
+
+		  count = $field_loop.children('.of-repeat-group').not('.to-copy').length;
+		  
 		  // the new input
 		  $input_field_label = $group.find('input.input-field-label');
-		  $select_field_type = $group.find('select.select-field-type');
-		  $select_field_tab = $group.find('select.select-field-tab');
-		  $label_hide_field = $group.find('label.label-hide-field');
-		  $checkbox_hide_field = $group.find('input.checkbox-hide-field');
- 
 		  input_field_label_name = $input_field_label.attr('data-rel');
-		  select_field_type_name = $select_field_type.attr('data-rel');
-		  select_field_tab_name = $select_field_tab.attr('data-rel');
-		  checkbox_hide_field_name = $checkbox_hide_field.attr('data-rel');
-		  
-		  count = $field_loop.children('.of-repeat-group').not('.to-copy').length;
- 
 		  $input_field_label.attr('name', input_field_label_name + '[' + ( count - 1 ) + '][label]');
+		  
+		  $select_field_type = $group.find('select.select-field-type');
+		  select_field_type_name = $select_field_type.attr('data-rel');
 		  $select_field_type.attr('name', select_field_type_name + '[' + ( count - 1 ) + '][type]'); 
+		  
+		  $select_field_tab = $group.find('select.select-field-tab');
+		  select_field_tab_name = $select_field_tab.attr('data-rel');
 		  $select_field_tab.attr('name', select_field_tab_name + '[' + ( count - 1 ) + '][tab_id]'); 
+
+		  $checkbox_hide_field = $group.find('input.checkbox-hide-field');
+		  checkbox_hide_field_name = $checkbox_hide_field.attr('data-rel');
 		  $checkbox_hide_field.attr('name', checkbox_hide_field_name + '[' + ( count - 1 ) + '][hide]'); 
 		  
+		  $label_hide_field = $group.find('label.label-hide-field');
 		  label_hide_field_for = checkbox_hide_field_name + '[' + ( count - 1 ) + '][hide]';
 		  $label_hide_field.attr('for', label_hide_field_for);
 		  
@@ -409,7 +620,39 @@ function of_byt_options_script(){	?>
  
 		});
  		
-		$(".of-repeat-tabs").sortable();
+		$(".of-repeat-tabs").sortable({
+			update: function(event, ui) {
+				var count = 0;
+				
+				$section = $(this).closest(".section");
+				$tab_loop = $section.find('.of-repeat-tabs');	
+				$tab_loop.find('.of-repeat-group').each(function (index, element) {
+
+					$this = $(this);
+					
+					if (!$this.hasClass('to-copy')) {
+					
+						$input_tab_id = $this.find('input.input-tab-id');
+						input_tab_id_name = $input_tab_id.attr('data-rel');
+						$input_tab_id.attr('name', input_tab_id_name + '[' + ( index ) + '][id]');
+
+						$input_tab_label = $this.find('input.input-tab-label');
+						input_tab_label_name = $input_tab_label.attr('data-rel');
+						$input_tab_label.attr('name', input_tab_label_name + '[' + index + '][label]'); 
+						
+						$checkbox_hide_tab = $this.find('input.checkbox-hide-tab');
+						checkbox_hide_tab_name = $checkbox_hide_tab.attr('data-rel');
+						$checkbox_hide_tab.attr('name', checkbox_hide_tab_name + '[' + index + '][hide]'); 
+						
+						$label_hide_tab = $this.find('label.label-hide-tab');
+						label_hide_tab_for = checkbox_hide_tab_name + '[' + index + '][hide]';
+						$label_hide_tab.attr('for', label_hide_tab_for);
+					}
+					
+				});
+				
+			}
+		});
  
 		$(".docopy_tab").on("click", function(e){
  

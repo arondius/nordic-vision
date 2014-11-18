@@ -164,7 +164,7 @@
 	 * @return int
 	 */
 	public function get_base_id() {
-		return apply_filters( 'bookyourtravel_entity_base_id', $this->post ? get_default_language_post_id($this->post->ID, 'accommodation') : null, $this );
+		return apply_filters( 'bookyourtravel_entity_base_id', $this->post ? get_default_language_post_id($this->post->ID, $this->entity_type ) : null, $this );
 	}
 	
 	/**

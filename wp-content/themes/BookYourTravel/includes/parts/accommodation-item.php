@@ -14,7 +14,7 @@
 	$score_out_of_10 = 0;
 	if ($reviews_total > 0) {
 		$review_score = $accommodation_obj->get_custom_field('review_score', false);
-		$score_out_of_10 = ceil($review_score * 10);
+		$score_out_of_10 = round($review_score * 10);
 	}
 	
 	$accommodation_min_price = number_format(get_accommodation_min_price($accommodation_id), $price_decimal_places, ".", "");

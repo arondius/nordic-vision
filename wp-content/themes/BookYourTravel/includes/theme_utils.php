@@ -82,15 +82,16 @@ function byt_contact_form_js() {
 	/* Contact form related stuff */
 	$business_address_latitude =  of_get_option('business_address_latitude', '');
 	$business_address_longitude =  of_get_option('business_address_longitude', '');
-	$contact_company_name = of_get_option('contact_company_name', '');
-	$contact_phone_number = of_get_option('contact_phone_number', '');
-	$contact_address_street = of_get_option('contact_address_street', '');
-	$contact_address_city = of_get_option('contact_address_city', '');
-	$contact_address_country = of_get_option('contact_address_country', '');	 
+	$contact_company_name = trim(of_get_option('contact_company_name', ''));
+	$contact_phone_number = trim(of_get_option('contact_phone_number', ''));
+	$contact_address_street = trim(of_get_option('contact_address_street', ''));
+	$contact_address_city = trim(of_get_option('contact_address_city', ''));
+	$contact_address_country = trim(of_get_option('contact_address_country', ''));	 
 	$company_address = '<strong>' . $contact_company_name . '</strong>';
-	$company_address .= (!empty($contact_address_street) ? ', ' . $contact_address_street : '');
-	$company_address .= (!empty($contact_address_city) ? ', ' . $contact_address_city : '');
-	$company_address .= (!empty($contact_address_country) ? ', ' . $contact_address_country : '');
+	$company_address .= (!empty($contact_address_street) ? $contact_address_street : '') . ', ';
+	$company_address .= (!empty($contact_address_city) ? $contact_address_city : '') . ', ';
+	$company_address .= (!empty($contact_address_country) ? $contact_address_country : '');
+	$company_address = rtrim(trim($company_address), ',');
 
 	if (!empty($business_address_longitude) && !empty($business_address_latitude)) {
 	?>	 
@@ -244,7 +245,13 @@ function byt_comment($comment, $args, $depth) {
 function byt_activation_notification( $user_id ){
 
 	$user = get_userdata( $user_id );
-	if( !$user || !$user->user_activation_key ) return false;
+	
+	if( !$user  ) return false;
+	
+	$user_activation_key = get_user_meta($user_id, 'user_activation_key', true);
+	
+	if (empty($user_activation_key))
+		return false;
 	
 	$register_page_url_id = get_current_language_page_id(of_get_option('register_page_url', ''));
 	$register_page_url = get_permalink($register_page_url_id);
@@ -255,11 +262,11 @@ function byt_activation_notification( $user_id ){
 		array( 
 			'action' => 'activate',
 			'user_id' => $user->ID,
-			'activation_key' => $user->user_activation_key
+			'activation_key' => $user_activation_key
 		), 
-		get_permalink( $register_page_url ) 
+		$register_page_url
 	);
-
+	
 	$subject = get_bloginfo( 'name' ) . __( ' - User Activation ', 'bookyourtravel' );
 	$body = __( 'To activate your user account, please click the activation link below: ', 'bookyourtravel' );
 	$body .= "\r\n";
@@ -270,11 +277,11 @@ function byt_activation_notification( $user_id ){
 	$headers   = array();
 	$headers[] = "MIME-Version: 1.0";
 	$headers[] = "Content-type: text/plain; charset=utf-8";
-	$headers[] = "From: " . get_bloginfo( 'name' ) . " <" . admin_email . ">";
-	$headers[] = "Reply-To: " . get_bloginfo( 'name' ) . " <" . admin_email . ">";
+	$headers[] = "From: " . get_bloginfo( 'name' ) . " <" . $admin_email . ">";
+	$headers[] = "Reply-To: " . get_bloginfo( 'name' ) . " <" . $admin_email . ">";
 	$headers[] = "X-Mailer: PHP/".phpversion();
 	
-	if( mail( $user->user_email, $subject, $body, implode( "\r\n", $headers ), '-f ' . admin_email ) ){
+	if( wp_mail( $user->user_email, $subject, $body, $headers ) ) {
 		return true;
 	} else {
 		return false;
@@ -291,19 +298,16 @@ function byt_activation_notification( $user_id ){
  */
 function byt_activate_user( $user_id, $activation_key ){
 	$user = get_userdata( $user_id );
+	$user_activation_key = get_user_meta($user_id, 'user_activation_key', true);
 
-	if( 
-		$user &&
-		$user->user_activation_key && 
-		$user->user_activation_key === $activation_key 
-	){
+	if ( $user && !empty($user_activation_key) && $user_activation_key === $activation_key ) {
 		$userdata = array(
 			'ID' => $user->ID,
 			'role' => get_option('default_role')
 		);
 
 		wp_update_user( $userdata );
-		delete_user_meta( $user->ID, 'user_activation_key' );
+		delete_user_meta( $user_id, 'user_activation_key' );
 		
 		return true;
 	} else{
@@ -357,6 +361,7 @@ function byt_resetpassword_notification( $user_id ){
 	$user = get_userdata( $user_id );
 	if( !$user || !$user->user_resetpassword_key ) return false;
 
+	$override_wp_login = of_get_option('override_wp_login', 0);
 	$reset_password_page_url_id = get_current_language_page_id(of_get_option('reset_password_page_url', ''));
 	$reset_password_page_url = get_permalink($reset_password_page_url_id);
 	if (!$reset_password_page_url || !$override_wp_login)
@@ -574,4 +579,18 @@ function list_paged_currencies($orderby = 'Id', $order = 'ASC', $paged = null, $
 	}
 
 	return $wpdb->get_results($sql);
+}
+
+function retrieve_array_of_values_from_query_string($key, $are_numbers = false) {
+	$values_array = array();
+	$query_string = explode("&",$_SERVER['QUERY_STRING']);
+	foreach ($query_string as $part) {
+		if (strpos($part, $key) !== false) {
+			$split = strpos($part,"=");
+			$value = trim(substr($part, $split + 1));
+			if (!empty($value))
+				$values_array[] = $are_numbers ? intval($value) : $value;
+		}
+	}
+	return $values_array;
 }

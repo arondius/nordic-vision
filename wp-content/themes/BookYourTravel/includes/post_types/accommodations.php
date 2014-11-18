@@ -272,16 +272,19 @@ function list_accommodations ( $paged = 0, $per_page = 0, $orderby = '', $order 
 				$search_only_available_properties = $search_args['search_only_available_properties'];
 
 				if ($search_only_available_properties) {
-					$select_sql .= ",
+				
+					$yesterday = date('Y-m-d',strtotime("-1 days"));
+				
+					$select_sql .= $wpdb->prepare(",
 					(
 						SELECT SUM(booked_room_count)
 						FROM
 						(
 							SELECT booked_dates.booking_date, SUM(IFNULL(bookings.room_count, 0)) booked_room_count
-							FROM wp_byt_accommodation_bookings bookings
+							FROM " . BOOKYOURTRAVEL_ACCOMMODATION_BOOKINGS_TABLE . " bookings
 							INNER JOIN 
 							(
-								SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) booking_date 
+								SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) booking_date 
 								FROM
 								(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 								(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -294,7 +297,7 @@ function list_accommodations ( $paged = 0, $per_page = 0, $orderby = '', $order 
 								SELECT booking_search_dates.single_date
 								FROM 
 								(
-									SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
+									SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
 									FROM
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -302,7 +305,7 @@ function list_accommodations ( $paged = 0, $per_page = 0, $orderby = '', $order 
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4 
 								HAVING 1=1
-						";
+						", $yesterday, $yesterday);
 						
 						if ($date_from != null && $date_to != null) {
 							$select_sql .= $wpdb->prepare(" AND single_date BETWEEN %s AND %s ", $date_from, $date_to);
@@ -319,17 +322,17 @@ function list_accommodations ( $paged = 0, $per_page = 0, $orderby = '', $order 
 						) booking_sums 
 					) total_booked_rooms ";
 						
-
-					$select_sql .= ",
+					$yesterday = date('Y-m-d',strtotime("-1 days"));
+					$select_sql .= $wpdb->prepare(",
 					(
 						SELECT SUM(vacant_room_count)
 						FROM
 						(
 							SELECT vacant_dates.vacant_date, SUM(IFNULL(vacancies.room_count, 0)) vacant_room_count, vacancies.accommodation_id 
-							FROM wp_byt_accommodation_vacancies vacancies
+							FROM " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " vacancies
 							INNER JOIN 
 							(
-								SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) vacant_date 
+								SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) vacant_date 
 								FROM
 								(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 								(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -342,7 +345,7 @@ function list_accommodations ( $paged = 0, $per_page = 0, $orderby = '', $order 
 								SELECT vacancy_search_dates.single_date
 								FROM 
 								(
-									SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
+									SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
 									FROM
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -350,7 +353,7 @@ function list_accommodations ( $paged = 0, $per_page = 0, $orderby = '', $order 
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
 									(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4 
 									HAVING 1=1
-						";
+						", $yesterday, $yesterday);
 						
 						if ($date_from != null && $date_to != null) {
 							$select_sql .= $wpdb->prepare(" AND single_date BETWEEN %s AND %s ", $date_from, $date_to);
@@ -478,7 +481,8 @@ function get_accommodation_total_price($accommodation_id, $date_from, $date_to, 
 	
 	$accommodation_id = get_default_language_post_id($accommodation_id, 'accommodation');
 	if ($room_type_id > 0)
-		$room_type_id = get_default_language_post_id($room_type_id, 'room_type'); 
+		$room_type_id = get_default_language_post_id($room_type_id, 'room_type');
+
 	$accommodation_is_price_per_person = get_post_meta($accommodation_id, 'accommodation_is_price_per_person', true);
 	$accommodation_count_children_stay_free = get_post_meta($accommodation_id, 'accommodation_count_children_stay_free', true );
 	if (!isset($accommodation_count_children_stay_free))
@@ -497,7 +501,9 @@ function get_accommodation_total_price($accommodation_id, $date_from, $date_to, 
 	$total_price = 0;
 	
 	foreach ($dates as $date) {
-		
+	
+		$date = date('Y-m-d 12:00:01', strtotime($date));
+	
 		$price_per_day = get_accommodation_price($date, $accommodation_id, $room_type_id, false);
 		$child_price_per_day = get_accommodation_price($date, $accommodation_id, $room_type_id, true);
 		
@@ -521,27 +527,33 @@ function list_accommodation_vacancies($date, $accommodation_id, $room_type_id=0,
 	if ($room_type_id > 0)
 		$room_type_id = get_default_language_post_id($room_type_id, 'room_type'); 
 	
-	$sql = $wpdb->prepare("SELECT " . ($is_child_price ? "vacancies.price_per_day_child" : "vacancies.price_per_day") . " price, vacancies.room_count, 
+	$sql = "SELECT " . ($is_child_price ? "vacancies.price_per_day_child" : "vacancies.price_per_day") . " price, vacancies.room_count, 
 			(
 				SELECT IFNULL(SUM(bookings.room_count), 0)
 				FROM " . BOOKYOURTRAVEL_ACCOMMODATION_BOOKINGS_TABLE . " bookings
-				WHERE bookings.accommodation_id=vacancies.accommodation_id AND %s BETWEEN bookings.date_from AND bookings.date_to
-			) booked_rooms 
+				WHERE bookings.accommodation_id=vacancies.accommodation_id ";
+
+	if ($room_type_id > 0) 
+		$sql .= $wpdb->prepare(" AND bookings.room_type_id=%d ", $room_type_id);
+
+	$sql .= $wpdb->prepare(" AND %s BETWEEN bookings.date_from AND bookings.date_to ", $date);
+		
+	$sql .= ") booked_rooms 
 			FROM " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " vacancies 
-			WHERE 1=1 ", $date);
+			WHERE 1=1 ";
 
 	$sql .= $wpdb->prepare(" 	AND vacancies.accommodation_id=%d 
 								AND (%s BETWEEN vacancies.start_date AND vacancies.end_date) ", $accommodation_id, $date);
 
 	if ($room_type_id > 0) 
-		$sql .= $wpdb->prepare(" AND room_type_id=%d ", $room_type_id);
+		$sql .= $wpdb->prepare(" AND vacancies.room_type_id=%d ", $room_type_id);
 
 	$sql .= " ORDER BY " . ($is_child_price ? "vacancies.price_per_day_child" : "vacancies.price_per_day");
 
 	return $wpdb->get_results($sql);
 }
 
-function list_accommodation_vacancy_dates($accommodation_id, $room_type_id=0, $month=0, $year=0, $available_only = false) {
+function list_accommodation_vacancy_start_dates($accommodation_id, $room_type_id=0, $month=0, $year=0) {
 
 	global $wpdb;
 	
@@ -550,23 +562,24 @@ function list_accommodation_vacancy_dates($accommodation_id, $room_type_id=0, $m
 		$room_type_id = get_default_language_post_id($room_type_id, 'room_type'); 
 	
 	$current_date = date('Y-m-d', time());
+	$yesterday = date('Y-m-d 12:00:01',strtotime("-1 days"));
 	
 	$end_date = null;
 	if ($month == 0 && $year == 0)
-		$end_date = date('Y-m-d', strtotime($current_date . ' + 199 days'));
+		$end_date = date('Y-m-d', strtotime($current_date . ' + 365 days'));
 
-	$sql = "
+	$sql = $wpdb->prepare("
 	SELECT dates.single_date
-			FROM 
-			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
-				FROM
-				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
-				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
-				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
-				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
-				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4 
-				HAVING";
+	FROM 
+	(
+		SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
+		FROM
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4 
+		HAVING", $yesterday);
 	
 	if (isset($end_date))
 		$sql .= $wpdb->prepare(" single_date BETWEEN %s AND %s ", $current_date, $end_date);
@@ -574,70 +587,113 @@ function list_accommodation_vacancy_dates($accommodation_id, $room_type_id=0, $m
 		$sql .= $wpdb->prepare(" single_date >= %s ", $current_date);
 		
 	$sql .= "				
-			) dates, " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " vacancies 
-			WHERE 1=1 ";
+	) dates, " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " vacancies 
+	WHERE 1=1 ";
 
-	if ($month > 0)
-		$sql .=  $wpdb->prepare(" AND MONTH(dates.single_date) = %d ", $month);
+	if ($month > 0 && $year > 0)
+		$sql .=  $wpdb->prepare(" AND MONTH(dates.single_date) = %d AND YEAR(dates.single_date) = %d  ", $month, $year);
 
-	if ($year > 0)
-		$sql .=  $wpdb->prepare(" AND YEAR(dates.single_date) = %d ", $year);
-
-	$sql .= $wpdb->prepare(" AND
-			dates.single_date 
-			BETWEEN
-			( 
-				SELECT MIN(start_date) start_date 
-				FROM " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " 
-				WHERE accommodation_id = %d ", $accommodation_id);
-				
-	if ($room_type_id > 0) 
-		$sql .= $wpdb->prepare(" AND room_type_id=%d ", $room_type_id);
-	$sql .= $wpdb->prepare("
-			) 
-			AND
-			( 
-				SELECT MAX(end_date) end_date 
-				FROM " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " 
-				WHERE accommodation_id = %d ", $accommodation_id);
+	$sql .= $wpdb->prepare(" AND vacancies.accommodation_id=%d AND dates.single_date BETWEEN vacancies.start_date AND vacancies.end_date ", $accommodation_id);
 
 	if ($room_type_id > 0) 
-		$sql .= $wpdb->prepare(" AND room_type_id=%d ", $room_type_id);
-
-	$sql .= $wpdb->prepare("
-			) 
-			AND vacancies.accommodation_id=%d AND dates.single_date BETWEEN vacancies.start_date AND vacancies.end_date ", $accommodation_id);
-
-	if ($room_type_id > 0) 
-		$sql .= $wpdb->prepare(" AND room_type_id=%d ", $room_type_id);
+		$sql .= $wpdb->prepare(" AND vacancies.room_type_id=%d ", $room_type_id);
 
 	$sql .= " GROUP BY dates.single_date ";
 	
 	$date_results = $wpdb->get_results($sql);
 	
-	if ($available_only) {
+	$available_dates = array();
 	
-		$available_dates = array();
-		
-		foreach ($date_results as $date_result) {
-		
-			$vacancy_results = list_accommodation_vacancies($date_result->single_date, $accommodation_id, $room_type_id);
-			$room_count = 0;
-			$booked_rooms = 0;
-			foreach($vacancy_results as $vacancy_result) {
-				$room_count += $vacancy_result->room_count;
-				if ($booked_rooms == 0)
-					$booked_rooms = $vacancy_result->booked_rooms;
-			}
-			
-			if ($room_count > $booked_rooms)
-				$available_dates[] = $date_result;
+	foreach ($date_results as $date_result) {
+	
+		$vacancy_results = list_accommodation_vacancies($date_result->single_date, $accommodation_id, $room_type_id);
+		$room_count = 0;
+		$booked_rooms = 0;
+		foreach($vacancy_results as $vacancy_result) {
+			$room_count += $vacancy_result->room_count;
+			if ($booked_rooms == 0)
+				$booked_rooms = $vacancy_result->booked_rooms;
 		}
 		
-		return $available_dates;
-	} 
+		if ($room_count > $booked_rooms) {
+			$date_result->single_date = date('Y-m-d', strtotime($date_result->single_date));
+			$available_dates[] = $date_result;
+		}
+	}
 	
-	return $date_results;
+	return $available_dates;
+}
+
+function list_accommodation_vacancy_end_dates($accommodation_id, $room_type_id=0, $month=0, $year=0, $day=0) {
+
+	global $wpdb;
+	
+	$accommodation_id = get_default_language_post_id($accommodation_id, 'accommodation');
+	if ($room_type_id > 0)
+		$room_type_id = get_default_language_post_id($room_type_id, 'room_type'); 
+	
+	$current_date = date('Y-m-d', time());
+	$yesterday = date('Y-m-d 00:00:00',strtotime("-1 days"));
+	
+	$end_date = null;
+	if ($month == 0 && $year == 0 && $day == 0)
+		$end_date = date('Y-m-d', strtotime($current_date . ' + 365 days'));
+
+	$sql = $wpdb->prepare("
+	SELECT dates.single_date
+	FROM 
+	(
+		SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date 
+		FROM
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t2,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t3,
+		(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4 
+		HAVING", $yesterday);
+	
+	if (isset($end_date))
+		$sql .= $wpdb->prepare(" single_date BETWEEN %s AND %s ", $current_date, $end_date);
+	else
+		$sql .= $wpdb->prepare(" single_date >= %s ", $current_date);
+		
+	$sql .= "				
+	) dates, " . BOOKYOURTRAVEL_ACCOMMODATION_VACANCIES_TABLE . " vacancies 
+	WHERE 1=1 ";
+
+	if ($month > 0 && $year > 0 && $day > 0)
+		$sql .=  $wpdb->prepare(" AND YEAR(dates.single_date) = %d AND MONTH(dates.single_date) = %d AND DAY(dates.single_date) > %d  ", $year, $month, $day);
+
+	$sql .= $wpdb->prepare(" AND vacancies.accommodation_id=%d AND dates.single_date BETWEEN vacancies.start_date AND vacancies.end_date ", $accommodation_id);
+
+	if ($room_type_id > 0) 
+		$sql .= $wpdb->prepare(" AND vacancies.room_type_id=%d ", $room_type_id);
+
+	$sql .= " GROUP BY dates.single_date ";
+	
+	$date_results = $wpdb->get_results($sql);
+	
+	$available_dates = array();
+	
+	foreach ($date_results as $date_result) {
+	
+		$vacancy_results = list_accommodation_vacancies($date_result->single_date, $accommodation_id, $room_type_id);
+		$room_count = 0;
+		$booked_rooms = 0;
+		foreach($vacancy_results as $vacancy_result) {
+			$room_count += $vacancy_result->room_count;
+			if ($booked_rooms == 0)
+				$booked_rooms = $vacancy_result->booked_rooms;
+		}
+		
+		if ($room_count > $booked_rooms) {
+			$date_result->single_date = date('Y-m-d', strtotime($date_result->single_date));
+			$available_dates[] = $date_result;
+		} else
+			break;
+	}
+	
+	return $available_dates;
 }
 
 function get_accommodation_price($date, $accommodation_id, $room_type_id=0, $is_child_price=false) {
@@ -650,6 +706,8 @@ function get_accommodation_price($date, $accommodation_id, $room_type_id=0, $is_
 
 	$price = 0;
 	$min_price = 0;
+	
+	$date = date('Y-m-d 12:00:01',strtotime($date));
 	
 	$vacancy_results = list_accommodation_vacancies($date, $accommodation_id, $room_type_id, $is_child_price);
 	
@@ -701,7 +759,7 @@ function get_accommodation_min_price($accommodation_id=0, $room_type_id=0, $loca
 	
 	if (count($accommodation_ids) > 0) {
 		foreach ($accommodation_ids as $accommodation_id) {	
-			$date_results = list_accommodation_vacancy_dates($accommodation_id, $room_type_id, 0, 0, true);
+			$date_results = list_accommodation_vacancy_start_dates($accommodation_id, $room_type_id, 0, 0);
 			foreach ($date_results as $date_result) {
 				$vacancy_results = list_accommodation_vacancies($date_result->single_date, $accommodation_id, $room_type_id);				
 				$room_count = 0;
@@ -866,6 +924,9 @@ function create_accommodation_booking($first_name, $last_name, $email, $phone, $
 
 	global $wpdb;
 	
+	$date_from = date('Y-m-d 12:00:00',strtotime($date_from));
+	$date_to = date('Y-m-d 12:00:00',strtotime($date_to));
+	
 	$accommodation_id = get_default_language_post_id($accommodation_id, 'accommodation');
 	if ($room_type_id > 0)
 		$room_type_id = get_default_language_post_id($room_type_id, 'room_type'); 
@@ -892,6 +953,9 @@ function create_accommodation_booking($first_name, $last_name, $email, $phone, $
 function update_accommodation_booking($booking_id, $first_name, $last_name, $email, $phone, $address, $town, $zip, $country, $special_requirements, $room_count, $date_from, $date_to, $accommodation_id, $room_type_id, $user_id, $is_self_catered, $total_price, $adults, $children) {
 
 	global $wpdb;
+	
+	$date_from = date('Y-m-d 12:00:00',strtotime($date_from));
+	$date_to = date('Y-m-d 12:00:00',strtotime($date_to));
 	
 	$accommodation_id = get_default_language_post_id($accommodation_id, 'accommodation');
 	if ($room_type_id > 0)
@@ -974,4 +1038,31 @@ function delete_accommodation_booking($booking_id) {
 			WHERE Id = %d";
 	
 	$wpdb->query($wpdb->prepare($sql, $booking_id));	
+}
+
+function get_count_bookings_with_unfixed_dates() {
+	global $wpdb;
+	
+	$sql = "SELECT COUNT(*) ct 
+			FROM " . BOOKYOURTRAVEL_ACCOMMODATION_BOOKINGS_TABLE . "
+			WHERE HOUR(date_from) != 12 OR HOUR(date_to) != 12";
+			
+	return $wpdb->get_var($sql);
+}
+
+function fix_accommodation_booking_dates() {
+	
+	global $wpdb;
+	
+	$sql = "UPDATE " . BOOKYOURTRAVEL_ACCOMMODATION_BOOKINGS_TABLE . "
+			SET date_from = DATE_ADD(DATE(date_from), INTERVAL 12 HOUR)
+			WHERE HOUR(date_from) != 12;";
+
+	$wpdb->query($sql);			
+			
+	$sql = "UPDATE " . BOOKYOURTRAVEL_ACCOMMODATION_BOOKINGS_TABLE . "
+			SET date_to = DATE_ADD(DATE(date_to), INTERVAL 12 HOUR)
+			WHERE HOUR(date_to) != 12;";
+
+	$wpdb->query($sql);
 }

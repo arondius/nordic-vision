@@ -80,6 +80,87 @@ function settings_ajax_save_first_name() {
 	die();
 }
 
+add_action( 'wp_ajax_hotel_term_search_request', 'hotel_term_search_request');
+add_action( 'wp_ajax_nopriv_hotel_term_search_request', 'hotel_term_search_request');
+function hotel_term_search_request() {
+	$nonce = $_REQUEST['nonce'];
+	$term = wp_kses($_REQUEST['q'], '');
+	
+	if ( wp_verify_nonce( $nonce, 'byt-ajax-nonce' ) ) {
+	
+		$results = search_content_and_location_by_term($term, 'accommodation', 10);
+		
+		$output = '';
+		foreach ($results as $result) {
+			$output .= $result->post_title . ';';
+		}
+		echo $output;
+		
+ 	}
+
+	die;
+}
+
+add_action( 'wp_ajax_self_catered_term_search_request', 'self_catered_term_search_request');
+add_action( 'wp_ajax_nopriv_self_catered_term_search_request', 'self_catered_term_search_request');
+function self_catered_term_search_request() {
+	$nonce = $_REQUEST['nonce'];
+	$term = wp_kses($_REQUEST['q'], '');
+	
+	if ( wp_verify_nonce( $nonce, 'byt-ajax-nonce' ) ) {
+	
+		$results = search_content_and_location_by_term($term, 'accommodation', 10);
+		
+		$output = '';
+		foreach ($results as $result) {
+			$output .= $result->post_title . ';';
+		}
+		echo $output;
+	}
+
+	die;
+}
+
+add_action( 'wp_ajax_car_rental_term_search_request', 'car_rental_term_search_request');
+add_action( 'wp_ajax_nopriv_car_rental_term_search_request', 'car_rental_term_search_request');
+function car_rental_term_search_request() {
+	$nonce = $_REQUEST['nonce'];
+	$term = wp_kses($_REQUEST['q'], '');
+	
+	if ( wp_verify_nonce( $nonce, 'byt-ajax-nonce' ) ) {
+	
+		$results = search_content_and_location_by_term($term, 'car_rental', 10);
+		
+		$output = '';
+		foreach ($results as $result) {
+			$output .= $result->post_title . ';';
+		}
+		echo $output;
+	}
+
+	die;
+}
+
+add_action( 'wp_ajax_tour_term_search_request', 'tour_term_search_request');
+add_action( 'wp_ajax_nopriv_tour_term_search_request', 'tour_term_search_request');
+function tour_term_search_request() {
+	$nonce = $_REQUEST['nonce'];
+	$term = wp_kses($_REQUEST['q'], '');
+	
+	if ( wp_verify_nonce( $nonce, 'byt-ajax-nonce' ) ) {
+	
+		$results = search_content_and_location_by_term($term, 'tour', 10);
+		
+		$output = '';
+		foreach ($results as $result) {
+			$output .= $result->post_title . ';';
+		}
+		echo $output;
+	}
+
+	die;
+}
+
 add_action( 'wp_ajax_car_rental_booked_dates_request', 'car_rental_booked_dates_request');
 add_action( 'wp_ajax_nopriv_car_rental_booked_dates_request', 'car_rental_booked_dates_request');
 function car_rental_booked_dates_request() {
@@ -102,9 +183,9 @@ function car_rental_booked_dates_request() {
 	die();
 }
 
-add_action( 'wp_ajax_accommodation_available_dates_request', 'accommodation_available_dates_request');
-add_action( 'wp_ajax_nopriv_accommodation_available_dates_request', 'accommodation_available_dates_request');
-function accommodation_available_dates_request() {
+add_action( 'wp_ajax_accommodation_available_start_dates_request', 'accommodation_available_start_dates_request');
+add_action( 'wp_ajax_nopriv_accommodation_available_start_dates_request', 'accommodation_available_start_dates_request');
+function accommodation_available_start_dates_request() {
 	if ( isset($_REQUEST) ) {
         $nonce = $_REQUEST['nonce'];
         if ( wp_verify_nonce( $nonce, 'byt-ajax-nonce' ) ) {
@@ -116,7 +197,30 @@ function accommodation_available_dates_request() {
 		
 			if ($accommodation_id > 0) {
 				
-				$available_dates = list_accommodation_vacancy_dates($accommodation_id, $room_type_id, $month, $year, true);
+				$available_dates = list_accommodation_vacancy_start_dates($accommodation_id, $room_type_id, $month, $year);
+				echo json_encode($available_dates);
+			}
+		}
+	}
+	
+	die();
+}
+
+add_action( 'wp_ajax_accommodation_available_end_dates_request', 'accommodation_available_end_dates_request');
+add_action( 'wp_ajax_nopriv_accommodation_available_end_dates_request', 'accommodation_available_end_dates_request');
+function accommodation_available_end_dates_request() {
+	if ( isset($_REQUEST) ) {
+        $nonce = $_REQUEST['nonce'];
+        if ( wp_verify_nonce( $nonce, 'byt-ajax-nonce' ) ) {
+
+			$accommodation_id = wp_kses($_REQUEST['accommodationId'], '');	
+			$room_type_id = wp_kses($_REQUEST['roomTypeId'], '');	
+			$year = wp_kses($_REQUEST['year'], '');
+			$month = wp_kses($_REQUEST['month'], '');	
+			$day = wp_kses($_REQUEST['day'], '');	
+		
+			if ($accommodation_id > 0) {				
+				$available_dates = list_accommodation_vacancy_end_dates($accommodation_id, $room_type_id, $month, $year, $day);
 				echo json_encode($available_dates);
 			}
 		}
@@ -491,7 +595,6 @@ function review_ajax_request() {
 			// nonce passed ok
 			$reviewed_post = get_post($reviewed_post_id);
 			$review_fields = list_review_fields($reviewed_post->post_type);
-			
 			$user_info = get_userdata($user_id);
 			
 			if ($reviewed_post != null && $user_info != null && count($review_fields) > 0) {
@@ -519,24 +622,27 @@ function review_ajax_request() {
 						add_post_meta($review_post_id, $field_id, $field_value);
 					}
 					
-					add_post_meta($review_post_id, 'review_likes', $likes);
-					add_post_meta($review_post_id, 'review_dislikes', $dislikes);
-					add_post_meta($review_post_id, 'review_post_id', $reviewed_post_id);
-				
-					$review_score = get_post_meta($reviewed_post_id, 'review_score', true);
-					$review_sum_score = get_post_meta($reviewed_post_id, 'review_sum_score', true);
-					
+					$review_score = floatval(get_post_meta($reviewed_post_id, 'review_score', true));
 					$review_score = $review_score ? $review_score : 0;
+					
+					$review_sum_score = floatval(get_post_meta($reviewed_post_id, 'review_sum_score', true));
 					$review_sum_score = $review_sum_score ? $review_sum_score : 0;
-					$review_count = get_reviews_count($reviewed_post_id);				
-					$review_count++;	
+					
+					$review_count = intval(get_reviews_count($reviewed_post_id));
+					$review_count = $review_count ? $review_count : 0;
+					$review_count++;
 					
 					$review_sum_score = $review_sum_score + $new_score_sum;
 					$new_review_score = $new_score_sum / (count($review_fields) * 10);
 					$review_score = ($review_score + $new_review_score) / $review_count;					
 					
+					add_post_meta($review_post_id, 'review_likes', $likes);
+					add_post_meta($review_post_id, 'review_dislikes', $dislikes);
+					add_post_meta($review_post_id, 'review_post_id', $reviewed_post_id);
+
 					update_post_meta($reviewed_post_id, 'review_sum_score', $review_sum_score);
-					update_post_meta($reviewed_post_id, 'review_score', $review_score);					
+					update_post_meta($reviewed_post_id, 'review_score', $review_score);		
+					update_post_meta($reviewed_post_id, 'review_count', $review_count);	
 				}
 				
 				echo $review_post_id;
@@ -549,6 +655,48 @@ function review_ajax_request() {
 	// Always die in functions echoing ajax content
 	die();
 
+}
+
+add_action( 'wp_ajax_sync_reviews_ajax_request', 'sync_reviews_ajax_request');
+function sync_reviews_ajax_request() {
+	if ( isset($_REQUEST) ) {
+        $nonce = $_REQUEST['nonce'];
+		if ( wp_verify_nonce( $nonce, 'optionsframework-options' ) ) {
+		
+			$enable_accommodations = of_get_option('enable_accommodations', 1); 
+			if ($enable_accommodations)
+				recalculate_review_scores('accommodation');
+			
+			$enable_tours = of_get_option('enable_tours', 1); 
+			if ($enable_tours)
+				recalculate_review_scores('tour');
+				
+			$enable_cruises = of_get_option('enable_cruises', 1); 
+			if ($enable_cruises)
+				recalculate_review_scores('cruises');
+		
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	die();
+}
+
+add_action( 'wp_ajax_fix_partial_booking_issue_ajax_request', 'fix_partial_booking_issue_ajax_request');
+function fix_partial_booking_issue_ajax_request() {
+	if ( isset($_REQUEST) ) {
+        $nonce = $_REQUEST['nonce'];
+		if ( wp_verify_nonce( $nonce, 'optionsframework-options' ) ) {
+
+			fix_accommodation_booking_dates();
+		
+			echo '1';
+		} else {
+			echo '0';
+		}
+	}
+	die();
 }
 
 add_action( 'wp_ajax_book_car_rental_ajax_request', 'book_car_rental_ajax_request' );
@@ -609,7 +757,7 @@ function book_car_rental_ajax_request() {
 					
 					$is_reservation_only = get_post_meta( $car_rental_id, 'car_rental_is_reservation_only', true );
 					
-					if (is_woocommerce_active() && !$is_reservation_only) {
+					if (byt_is_woocommerce_active() && !$is_reservation_only) {
 						$use_woocommerce_for_checkout = of_get_option('use_woocommerce_for_checkout', 0);
 						if ($use_woocommerce_for_checkout) {
 							$product_id = byt_woocommerce_create_product($car_rental_obj->get_title(), '', 'ACC_' . $car_rental_id . '_', $booking_id, $total_price, BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CAR_RENTALS); 
@@ -717,7 +865,7 @@ function book_accommodation_ajax_request() {
 					
 					$booking_id = create_accommodation_booking ($first_name, $last_name, $email, $phone, $address, $town, $zip, $country, $special_requirements, $room_count, $date_from, $date_to, $accommodation_id, $room_type_id, $current_user->ID, $is_self_catered, $total_price, $adults, $children);
 
-					if (is_woocommerce_active() && !$is_reservation_only) {
+					if (byt_is_woocommerce_active() && !$is_reservation_only) {
 						$use_woocommerce_for_checkout = of_get_option('use_woocommerce_for_checkout', 0);
 						if ($use_woocommerce_for_checkout) {
 							$product_id = byt_woocommerce_create_product($accommodation->post_title, '', 'ACC_' . $accommodation_id . '_', $booking_id, $total_price, BOOKYOURTRAVEL_WOO_PRODUCT_CAT_ACCOMMODATIONS); 
@@ -855,7 +1003,7 @@ function book_tour_ajax_request() {
 					
 					$is_reservation_only = get_post_meta( $tour_id, 'tour_is_reservation_only', true );
 					
-					if (is_woocommerce_active() && !$is_reservation_only) {
+					if (byt_is_woocommerce_active() && !$is_reservation_only) {
 						$use_woocommerce_for_checkout = of_get_option('use_woocommerce_for_checkout', 0);
 						if ($use_woocommerce_for_checkout) {
 							$product_id = byt_woocommerce_create_product($tour->post_title, '', 'ACC_' . $tour_id . '_', $booking_id, $total_price, BOOKYOURTRAVEL_WOO_PRODUCT_CAT_TOURS); 
@@ -975,7 +1123,7 @@ function book_cruise_ajax_request() {
 					
 					$is_reservation_only = get_post_meta( $cruise_id, 'cruise_is_reservation_only', true );
 					
-					if (is_woocommerce_active() && !$is_reservation_only) {
+					if (byt_is_woocommerce_active() && !$is_reservation_only) {
 						$use_woocommerce_for_checkout = of_get_option('use_woocommerce_for_checkout', 0);
 						if ($use_woocommerce_for_checkout) {
 							$product_id = byt_woocommerce_create_product($cruise_obj->get_title(), '', 'ACC_' . $cruise_id . '_', $booking_id, $total_price, BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CRUISES); 

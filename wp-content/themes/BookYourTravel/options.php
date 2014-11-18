@@ -85,7 +85,7 @@ function optionsframework_options() {
 		'std' => '0',
 		'type' => 'checkbox');
 		
-	if (is_woocommerce_active()) {
+	if (byt_is_woocommerce_active()) {
 		$options[] = array(
 			'name' => __('Use WooCommerce for checkout', 'bookyourtravel'),
 			'desc' => __('Use WooCommerce to enable payment after booking', 'bookyourtravel'),
@@ -368,6 +368,125 @@ function optionsframework_options() {
 		'type' => 'checkbox');
 		
 	$options[] = array(
+		'name' => __('Search box "What?" text', 'bookyourtravel'),
+		'desc' => __('"What?" text to display on home page search box.', 'bookyourtravel'),
+		'id' => 'search_box_what_text',
+		'std' => __('What?', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box "Where?" text', 'bookyourtravel'),
+		'desc' => __('"Where?" text to display on home page search box.', 'bookyourtravel'),
+		'id' => 'search_box_where_text',
+		'std' => __('Where?', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box "When?" text', 'bookyourtravel'),
+		'desc' => __('"When?" text to display on home page search box.', 'bookyourtravel'),
+		'id' => 'search_box_when_text',
+		'std' => __('When?', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box "Who?" text', 'bookyourtravel'),
+		'desc' => __('"Who?" text to display on home page search box.', 'bookyourtravel'),
+		'id' => 'search_box_who_text',
+		'std' => __('Who?', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box accommodation location label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for accommodation location.', 'bookyourtravel'),
+		'id' => 'search_box_accommodation_location_text',
+		'std' => __('Your destination', 'bookyourtravel'),
+		'type' => 'text');
+
+	$options[] = array(
+		'name' => __('Search box accommodation location placeholder', 'bookyourtravel'),
+		'desc' => __('Text to display in search box as placeholder for accommodation location.', 'bookyourtravel'),
+		'id' => 'search_box_accommodation_location_placeholder',
+		'std' => __('City, region, district or specific accommodation', 'bookyourtravel'),
+		'type' => 'text');
+
+	$options[] = array(
+		'name' => __('Search box car rental location label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for car rental location.', 'bookyourtravel'),
+		'id' => 'search_box_car_rental_location_text',
+		'std' => __('Pick up from', 'bookyourtravel'),
+		'type' => 'text');
+
+	$options[] = array(
+		'name' => __('Search box car rental location placeholder', 'bookyourtravel'),
+		'desc' => __('Text to display in search box as placeholder for car rental location.', 'bookyourtravel'),
+		'id' => 'search_box_car_rental_location_placeholder',
+		'std' => __('I want to pickup car in', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box tour location label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for tour location.', 'bookyourtravel'),
+		'id' => 'search_box_tour_location_text',
+		'std' => __('Tour location', 'bookyourtravel'),
+		'type' => 'text');
+
+	$options[] = array(
+		'name' => __('Search box tour location placeholder', 'bookyourtravel'),
+		'desc' => __('Text to display in search box as placeholder for tour location.', 'bookyourtravel'),
+		'id' => 'search_box_tour_location_placeholder',
+		'std' => __('City, region, district or specific tour', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box accommodation date from label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for accommodation date from.', 'bookyourtravel'),
+		'id' => 'search_box_accommodation_date_from_text',
+		'std' => __('Check-in date', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box accommodation date to label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for accommodation date to.', 'bookyourtravel'),
+		'id' => 'search_box_accommodation_date_to_text',
+		'std' => __('Check-out date', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box car rental date from label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for car rental date from.', 'bookyourtravel'),
+		'id' => 'search_box_car_rental_date_from_text',
+		'std' => __('Pick-up date', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box car rental date to label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for car rental date to.', 'bookyourtravel'),
+		'id' => 'search_box_car_rental_date_to_text',
+		'std' => __('Drop-off date', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box tour date from label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for tour date from.', 'bookyourtravel'),
+		'id' => 'search_box_tour_date_from_text',
+		'std' => __('Start date', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
+		'name' => __('Search box cruise date from label', 'bookyourtravel'),
+		'desc' => __('Text to display in search box label for cruise date from.', 'bookyourtravel'),
+		'id' => 'search_box_cruise_date_from_text',
+		'std' => __('Start date', 'bookyourtravel'),
+		'type' => 'text');
+
+	$options[] = array(
+		'name' => __('Search box submit text', 'bookyourtravel'),
+		'desc' => __('Text to display in search box submit button.', 'bookyourtravel'),
+		'id' => 'search_box_submit_button_text',
+		'std' => __('Proceed to results', 'bookyourtravel'),
+		'type' => 'text');
+		
+	$options[] = array(
 		'name' => __('Custom search results page', 'bookyourtravel'),
 		'desc' => __('Page to redirect to for custom search results', 'bookyourtravel'),
 		'id' => 'redirect_to_search_results',
@@ -386,9 +505,9 @@ function optionsframework_options() {
 		'options' => $search_results_view_array);
 		
 	$options[] = array(
-		'name' => __('Accommodations search posts per page', 'bookyourtravel'),
-		'desc' => __('Number of accommodations to display on custom search page', 'bookyourtravel'),
-		'id' => 'accommodations_search_posts_per_page',
+		'name' => __('Search results posts per page', 'bookyourtravel'),
+		'desc' => __('Number of results to display on custom search page', 'bookyourtravel'),
+		'id' => 'search_results_posts_per_page',
 		'std' => '12',
 		'type' => 'text');
 		
@@ -864,6 +983,30 @@ function optionsframework_options() {
 		'id' => 'cruise_review_fields',
 		'std' => 'Default review field label',
 		'type' => 'repeat_review_field');
+		
+	$options[] = array(
+		'name' => __('Synchronise reviews', 'bookyourtravel'),
+		'desc' => __('Click this button to synchronise review totals', 'bookyourtravel'),
+		'id' => 'synchronise_reviews',
+		'std' => 'Default',
+		'type' => 'link_button_field');
+
+	$count_bookings_with_unfixed_dates = get_count_bookings_with_unfixed_dates();
+	
+	if ($count_bookings_with_unfixed_dates > 0) {		
+
+		$options[] = array(
+			'name' => __('Upgrades', 'bookyourtravel'),
+			'type' => 'heading');
+			
+		$options[] = array(
+			'name' => __('Fix partial booking issue', 'bookyourtravel'),
+			'desc' => __('Click this button to fix partial booking issue', 'bookyourtravel'),
+			'id' => 'fix_partial_booking_issue',
+			'std' => 'Default',
+			'type' => 'link_button_field');
+			
+	}
 		
 	return $options;
 }

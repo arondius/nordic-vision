@@ -375,7 +375,7 @@ $review_custom_meta_fields = array(
 		'desc'	=> '', // description
 		'id'	=>  $prefix.'post_id', // field id and name
 		'type'	=> 'post_select', // type of field
-		'post_type' => array('accommodation', 'tour') // post types to display, options are prefixed with their post type
+		'post_type' => array('accommodation', 'tour', 'cruise') // post types to display, options are prefixed with their post type
 	),
 	array('label'	=> __('Cleanliness', 'bookyourtravel'),	'desc'	=> __('Cleanliness rating', 'bookyourtravel'), 'id'	=> $prefix.'cleanliness', 'type'	=> 'slider', 'min'	=> '1', 'max'	=> '10', 'step'	=> '1' ),
 	array('label'	=> __('Comfort', 'bookyourtravel'),	'desc'	=> __('Comfort rating', 'bookyourtravel'), 'id'	=> $prefix.'comfort', 'type'	=> 'slider', 'min'	=> '1', 'max'	=> '10', 'step'	=> '1' ),

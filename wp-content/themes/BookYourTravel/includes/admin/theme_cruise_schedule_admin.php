@@ -591,7 +591,7 @@ class cruise_schedule_admin_list_table extends WP_List_Table {
 		$cruises_select = '<select id="cruises_select" name="cruises_select">';
 		$cruises_select .= '<option value="">' . __('Select cruise', 'bookyourtravel') . '</option>';
 
-		$cruise_results = list_cruises();
+		$cruise_results = list_cruises(0, 0, '', '', array(), false, array());
 		if ( count($cruise_results) > 0 && $cruise_results['total'] > 0 ) {
 			foreach ($cruise_results['results'] as $cruise_result) {
 				global $post;				

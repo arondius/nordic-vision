@@ -5,7 +5,7 @@ var jq = jQuery.noConflict();
 	});
 
 	function initialize_contact_map() {
-		var secheltLoc = new google.maps.LatLng(window.window.business_address_latitude, window.business_address_longitude);
+		var secheltLoc = new google.maps.LatLng(window.business_address_latitude, window.business_address_longitude);
 		var myMapOptions = {
 			 zoom: 15
 			,center: secheltLoc
@@ -15,7 +15,7 @@ var jq = jQuery.noConflict();
 		var marker = new google.maps.Marker({
 			map: theMap,
 			draggable: true,
-			position: new google.maps.LatLng(window.window.business_address_latitude, window.business_address_longitude),
+			position: new google.maps.LatLng(window.business_address_latitude, window.business_address_longitude),
 			visible: true
 		});
 		var boxText = document.createElement("div");

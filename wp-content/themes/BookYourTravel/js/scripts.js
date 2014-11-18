@@ -40,12 +40,16 @@ function handleRibbonClick(e) {
 
 jq(window).load(function() {
 	// Run code
+	resizeFluidItems();
+});
+
+function resizeFluidItems() {
 	resizeFluidItem(".one-fourth.accommodation_item");
 	resizeFluidItem(".one-fourth.location_item");
 	resizeFluidItem(".one-fourth.tour_item");
 	resizeFluidItem(".one-fourth.car_rental_item");
 	resizeFluidItem(".one-fourth.cruise_item");
-});
+}
 
 function resizeFluidItem(filter) {
 	var maxHeight = 0;            
@@ -59,115 +63,6 @@ function resizeFluidItem(filter) {
 
 jq(document).ready(function () {
 
-	//UI FORM ELEMENTS
-	var spinner = jq('.spinner input').spinner({ min: 0 });
-	
-	jq('#from').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		minDate: 0,
-		onClose: function (selectedDate) {
-			var d = new Date(selectedDate);
-			d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1);
-			jq("#to").datepicker("option", "minDate", d);
-		}
-	});
-	
-	jq('#from2').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		minDate: 0,
-		onClose: function (selectedDate) {
-			var d = new Date(selectedDate);
-			d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1);
-			jq("#to2").datepicker("option", "minDate", d);
-		}
-	});
-	
-	jq('#from3').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		minDate: 0,
-		onClose: function (selectedDate) {
-			var d = new Date(selectedDate);
-			d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1);
-			jq("#to3").datepicker("option", "minDate", d);
-		}
-	});
-	
-	jq('#from4').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		minDate: 0
-	});
-
-	jq('#to').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		onClose: function (selectedDate) {
-			var d = new Date(selectedDate);
-			d = new Date(d.getFullYear(), d.getMonth(), d.getDate()-1);
-			jq("#from").datepicker("option", "maxDate", d);
-		}
-	});
-	
-	jq('#to2').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		onClose: function (selectedDate) {
-			var d = new Date(selectedDate);
-			d = new Date(d.getFullYear(), d.getMonth(), d.getDate()-1);
-			jq("#from2").datepicker("option", "maxDate", d);
-		}
-	});
-	
-	jq('#to3').datepicker({
-		showOn: 'button',
-		buttonImage: window.themePath + '/images/ico/calendar.png',
-		buttonImageOnly: true,
-		onClose: function (selectedDate) {
-			var d = new Date(selectedDate);
-			d = new Date(d.getFullYear(), d.getMonth(), d.getDate()-1);
-			jq("#from3").datepicker("option", "maxDate", d);
-		}
-	});
-	
-	jq( "#slider" ).slider({
-		range: "min",
-		value:0,
-		min: 0,
-		max: 10,
-		step: 1
-	});
-	
-	//CUSTOM FORM ELEMENTS
-	jq("input[type=radio], select, input[type=checkbox]").uniform();
-	
-	jq('.main-search .form').hide();
-	jq('.main-search .form input').prop('disabled', true);	
-	jq('.main-search .form select').prop('disabled', true);	
-	jq(".main-search #form" + window.visibleSearchFormNumber).show();
-	jq(".main-search #form" + window.visibleSearchFormNumber + " input").prop('disabled', false);
-	jq(".main-search #form" + window.visibleSearchFormNumber + " select").prop('disabled', false);
-	jq('.main-search input[name=what]').on('click', function() {
-		window.visibleSearchFormNumber = jq(this).val();
-		jq('.main-search .form').hide();
-		jq('.main-search .form input').prop('disabled', true);
-		jq('.main-search .form select').prop('disabled', true);
-		jq(".main-search #form" + window.visibleSearchFormNumber).show();
-		jq(".main-search #form" + window.visibleSearchFormNumber + " input").prop('disabled', false);
-		jq(".main-search #form" + window.visibleSearchFormNumber + " select").prop('disabled', false);
-		jq('.main-search input[name=what]').prop('checked', false);
-		jq(this).prop('checked', 'checked');
-		jq.uniform.update(); 
-	});
-	
 	//SCROLL TO TOP BUTTON
 	jq('.scroll-to-top').click(function () {
 		jq('body,html').animate({
@@ -247,22 +142,28 @@ jq(document).ready(function () {
 		
 	jq('.grid-view').click(function(e) {
 		var currentClass = jq(".three-fourth article").attr("class");
-		currentClass = currentClass.replace('last', '');
-		currentClass = currentClass.replace('full-width', 'one-fourth');
-		jq(".three-fourth article").attr("class", currentClass);
-		jq(".three-fourth article:nth-child(3n)").addClass("last");
-		jq(".view-type li").removeClass("active");
-		jq(this).addClass("active");
+		if (typeof currentClass != 'undefined' && currentClass.length > 0) {
+			currentClass = currentClass.replace('last', '');
+			currentClass = currentClass.replace('full-width', 'one-fourth');
+			jq(".three-fourth article").attr("class", currentClass);
+			jq(".three-fourth article:nth-child(3n)").addClass("last");
+			jq(".view-type li").removeClass("active");
+			jq(this).addClass("active");
+			
+			resizeFluidItems();
+		}
 		e.preventDefault();
 	});
 	
 	jq('.list-view').click(function(e) {
 		var currentClass = jq(".three-fourth article").attr("class");
-		currentClass = currentClass.replace('last', '');
-		currentClass = currentClass.replace('one-fourth', 'full-width');
-		jq(".three-fourth article").attr("class", currentClass);
-		jq(".view-type li").removeClass("active");
-		jq(this).addClass("active");
+		if (typeof currentClass != 'undefined' && currentClass.length > 0) {
+			currentClass = currentClass.replace('last', '');
+			currentClass = currentClass.replace('one-fourth', 'full-width');
+			jq(".three-fourth article").attr("class", currentClass);
+			jq(".view-type li").removeClass("active");
+			jq(this).addClass("active");
+		}
 		e.preventDefault();
 	});
 	

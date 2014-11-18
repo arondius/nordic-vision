@@ -1,4 +1,138 @@
-﻿v5.00
+﻿v5.20
+
+31.10.
+
+- renamed is_woocommerce_active to byt_is_woocommerce_active to avoid conflicts with other plugins.
+- fixed error on tour and cruise issues caused by sql bug.
+- fixed issues with inquiry form when user is logged out.
+
+Files changed
+
+header.php
+includes/parts/inquiry-form.php
+includes/post_types/cruises.php
+includes/post_types/tours.php
+includes/theme_actions.php
+includes/theme_ajax.php
+includes/theme_woocommerce.php
+css/style.css
+options.php
+custom-search-results.php
+
+
+30.10.
+
+- search filter is now a widget - with translatable fields.
+- home page search widget fields are now editable from Theme options -> Search results.
+- search widget fields prepulated based on query string values.
+- autosuggest feature added to location search field.
+- resolved issues with cruise weekly type not working
+- partial date booking issue resolved - after upgrade, existing users must go to Theme options -> Upgrade tab and click the "Fix partial booking issue" to fix existing bookings.
+- dynamic tabs and fields are now translatable via WPML - after upgrade, existing users must go to Theme options and click Save for the dynamic strings to properly register with WPML.
+- booked date range issue resolved - if date between two dates was booked out, one could still book the date range and the already booked date appeared a price 0.
+- dynamic fields allow more HTML tags now.
+- issue with cruises and tours end date resolved.
+- direct include of jquery ui removed. Resorted to using built in jquery ui libraries instead.
+
+Files changed:
+
+custom-search-results.php
+css/style.css
+functions.php
+header.php
+includes/admin/theme_accommodation_booking_admin.php
+includes/admin/theme_accommodation_vacancy_admin.php
+includes/admin/theme_tour_schedule_admin.php
+includes/classes/abstracts/byt-entity.php
+includes/classes/accommodation.class.php
+includes/classes/cabin_type.class.php
+includes/classes/car_rental.class.php
+includes/classes/cruise.class.php
+includes/classes/room_type.class.php
+includes/classes/tour.class.php
+includes/parts/accommodation-booking-form.php
+includes/parts/home-page-header.php
+includes/parts/home-search-box.php
+includes/parts/home-search-box.php
+includes/post_types/accommodations.php
+includes/post_types/cruises.php
+includes/post_types/search.php
+includes/post_types/tours.php
+includes/theme_actions.php
+includes/theme_ajax.php
+includes/theme_filters.php
+includes/theme_of_custom.php
+includes/theme_post_types.php
+includes/theme_utils.php
+includes/theme_utils.php
+js/accommodations.js
+js/jquery-ui.min.js
+js/scripts.js
+js/scripts.js
+js/search_widget.js
+js/search.js
+js/custom-suggest.js
+options.php
+plugins/frontend-submit/frontend-submit.php
+plugins/metaboxes/meta_box.php
+plugins/widgets/widget-search.php
+sidebar-left-search.php
+single-accommodation.php
+single-car_rental.php
+single-cruise.php
+single-location.php
+single-tour.php
+wpml-config.xml
+
+v5.01
+
+01.10.2014
+
+- Resolved issues with registration/confirmation mails not being sent on register
+- Added ability to synchronize review counts/scores from Reviews tab in Theme options (bottom of Reviews tab)
+- Fixed issue with reviews not showing correct rating scores (admin must also run Sync reviews action mentioned above at least for this to then work).
+- Grid view / list view switch resize fluid items fix
+- Fixed reorder dynamic tabs and fields in options issue
+- Fixed hardcoded table names in accommodations.php
+- Resolved issue of duplicate terms being created in woocommerce
+- Updated language files with latest translatable terms
+- Fixed issue with comma in address on contact map 
+- Fixed issue with cruise schedules
+- Fixed issue with inquiry and review buttons not working
+
+Files changed:
+functions.php
+style.css
+js/scripts.js
+languages/default.pot
+languages/default.mo
+includes/parts/accommodation-item.php
+includes/parts/cruise-item.php
+includes/parts/tour-item.php
+includes/parts/review-item.php
+includes/post_types/reviews.php
+includes/theme_ajax.php
+includes/theme_of_custom.php
+options.php
+includes/theme_utils.php
+js/contact.js
+includes/theme_post_types.php
+includes/admin/theme_cruise_schedule_admin.php
+single-tour.php
+includes/theme_woocommerce.php
+css/style.css
+includes/theme_actions.php
+plugins/frontend-submit/frontend-submit.php
+page-user-register.php
+includes/parts/register-lightbox.php
+includes/theme_meta_boxes.php
+includes/post_types/accommodations.php
+includes/post_types/cruises.php
+single-accommodation.php
+single-car_rental.php
+single-cruise.php
+
+v5.00
 
 19.9.2014
 - fixed leftover bug in functions.php and single-tour.php

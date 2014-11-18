@@ -356,26 +356,33 @@ function list_available_cruise_schedule_entries($cruise_id, $cabin_type_id, $fro
 	global $wpdb;
 
 	$cruise_id = get_default_language_post_id($cruise_id, 'cruise');
+	if ($cabin_type_id > 0)
+		$cabin_type_id = get_default_language_post_id($cabin_type_id, 'cabin_type');
 	
 	$table_name_schedule = BOOKYOURTRAVEL_CRUISE_SCHEDULE_TABLE;
 	$table_name_bookings = BOOKYOURTRAVEL_CRUISE_BOOKING_TABLE;
+	
+	$yesterday = date('Y-m-d',strtotime("-1 days"));
 
 	if ($cruise_type_is_repeated == 0) {
 		// oneoff cruises, must have start date in future in order for people to attend
 		$sql = "
-			SELECT *, schedule.start_date cruise_date, 0 numm
+			SELECT schedule.*, schedule.start_date cruise_date, 0 numm
 			FROM $table_name_schedule schedule 
 			WHERE cruise_id=%d AND cabin_type_id=%d AND start_date >= %s ";
 			
 		$sql = $wpdb->prepare($sql, $cruise_id, $cabin_type_id, $from_date);
 	} else if ($cruise_type_is_repeated == 1) {		
 		// daily cruises
-		$sql = "
+		
+		$sql = $wpdb->prepare("
 			SELECT schedule.*, date_range.single_date cruise_date, num
 			FROM $table_name_schedule schedule
 			LEFT JOIN 
 			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num
+				SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num ", $yesterday);
+				
+		$sql .= "
 				FROM
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -384,20 +391,22 @@ function list_available_cruise_schedule_entries($cruise_id, $cabin_type_id, $fro
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
 				HAVING  YEAR(single_date) = %d AND MONTH(single_date) = %d
 			) date_range ON date_range.single_date >= %s
-			WHERE cruise_id=%d AND cabin_type_id=%d AND ( schedule.end_date IS NULL OR date_range.single_date < schedule.end_date )
-			HAVING schedule.cabin_count > (SELECT COUNT(*) ct FROM $table_name_bookings bookings WHERE bookings.tour_schedule_id = schedule.Id AND bookings.tour_date = date_range.single_date) ";
+			WHERE cruise_id=%d AND cabin_type_id=%d AND ( ( schedule.end_date IS NULL OR schedule.end_date = '0000-00-00 00:00:00' ) OR date_range.single_date < schedule.end_date )
+			HAVING schedule.cabin_count > (SELECT COUNT(*) ct FROM $table_name_bookings bookings WHERE bookings.cruise_schedule_id = schedule.Id AND bookings.cruise_date = date_range.single_date) ";
 		
 		$sql = $wpdb->prepare($sql, $from_year, $from_month, $from_date, $cruise_id, $cabin_type_id);
 
 	} else if ($cruise_type_is_repeated == 2) {
 	
 		// weekday cruises
-		$sql = "
-			SELECT schedule.Id, schedule.price, schedule.price_child, schedule.duration_days, date_range.single_date cruise_date, num
+		$sql = $wpdb->prepare("
+			SELECT schedule.*, date_range.single_date cruise_date, num
 			FROM $table_name_schedule schedule
 			LEFT JOIN 
 			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num
+				SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num ", $yesterday);
+
+		$sql .= "
 				FROM
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -406,19 +415,21 @@ function list_available_cruise_schedule_entries($cruise_id, $cabin_type_id, $fro
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
 				HAVING WEEKDAY(single_date) BETWEEN 0 AND 4 AND YEAR(single_date) = %d AND MONTH(single_date) = %d
 			) date_range ON date_range.single_date >= %s
-			WHERE cruise_id=%d AND cabin_type_id=%d AND ( schedule.end_date IS NULL OR date_range.single_date < schedule.end_date )	
-			HAVING schedule.cabin_count > (SELECT COUNT(*) ct FROM $table_name_bookings bookings WHERE bookings.tour_schedule_id = schedule.Id AND bookings.tour_date = date_range.single_date) ";
+			WHERE cruise_id=%d AND cabin_type_id=%d AND ( ( schedule.end_date IS NULL OR schedule.end_date = '0000-00-00 00:00:00' ) OR date_range.single_date < schedule.end_date )	
+			HAVING schedule.cabin_count > (SELECT COUNT(*) ct FROM $table_name_bookings bookings WHERE bookings.cruise_schedule_id = schedule.Id AND bookings.cruise_date = date_range.single_date) ";
 		
 		$sql = $wpdb->prepare($sql, $from_year, $from_month, $from_date, $cruise_id, $cabin_type_id);
 	} else if ($cruise_type_is_repeated == 3) {
 		
 		// weekly cruises
-		$sql = "
-			SELECT schedule.Id, schedule.price, schedule.price_child, schedule.duration_days, date_range.single_date cruise_date, num
+		$sql = $wpdb->prepare("
+			SELECT schedule.*, date_range.single_date cruise_date, num
 			FROM $table_name_schedule schedule
 			LEFT JOIN 
 			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num
+				SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num ", $yesterday);
+				
+		$sql .= "
 				FROM
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -427,8 +438,8 @@ function list_available_cruise_schedule_entries($cruise_id, $cabin_type_id, $fro
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t4
 				HAVING WEEKDAY(single_date) = %d AND YEAR(single_date) = %d AND MONTH(single_date) = %d
 			) date_range ON date_range.single_date >= %s 
-			WHERE cruise_id=%d AND cabin_type_id=%d AND ( schedule.end_date IS NULL OR date_range.single_date < schedule.end_date ) 			
-			HAVING schedule.cabin_count > (SELECT COUNT(*) ct FROM $table_name_bookings bookings WHERE bookings.tour_schedule_id = schedule.Id AND bookings.tour_date = date_range.single_date) ";
+			WHERE cruise_id=%d AND cabin_type_id=%d AND ( ( schedule.end_date IS NULL OR schedule.end_date = '0000-00-00 00:00:00' ) OR date_range.single_date < schedule.end_date ) 			
+			HAVING schedule.cabin_count > (SELECT COUNT(*) ct FROM $table_name_bookings bookings WHERE bookings.cruise_schedule_id = schedule.Id AND bookings.cruise_date = date_range.single_date) ";
 		
 		$sql = $wpdb->prepare($sql, $cruise_type_day_of_week, $from_year, $from_month, $from_date, $cruise_id, $cabin_type_id);		
 	}
@@ -458,8 +469,8 @@ function get_cruise_booking($booking_id) {
 	if(defined('ICL_LANGUAGE_CODE') && (get_default_language() != ICL_LANGUAGE_CODE || $byt_multi_language_count > 1)) {
 		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations ON translations.element_type = 'post_cruise' AND translations.language_code='" . ICL_LANGUAGE_CODE . "' AND translations.element_id = cruises.ID ";
 		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations_default ON translations_default.element_type = 'post_cruise' AND translations_default.language_code='" . get_default_language() . "' AND translations_default.trid = translations.trid ";
-		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations ON translations.element_type = 'post_cabin_type' AND translations.language_code='" . ICL_LANGUAGE_CODE . "' AND translations.element_id = cabin_types.ID ";
-		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations_default ON translations_default.element_type = 'post_cabin_type' AND translations_default.language_code='" . get_default_language() . "' AND translations_default.trid = translations.trid ";
+		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations2 ON translations2.element_type = 'post_cabin_type' AND translations2.language_code='" . ICL_LANGUAGE_CODE . "' AND translations2.element_id = cabin_types.ID ";
+		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations_default2 ON translations_default2.element_type = 'post_cabin_type' AND translations_default2.language_code='" . get_default_language() . "' AND translations_default2.trid = translations2.trid ";
 	}
 
 	$sql .= " WHERE cruises.post_status = 'publish' AND bookings.Id = %d ";
@@ -549,8 +560,8 @@ function list_cruise_bookings($paged = null, $per_page = 0, $orderby = 'Id', $or
 	if(defined('ICL_LANGUAGE_CODE') && (get_default_language() != ICL_LANGUAGE_CODE || $byt_multi_language_count > 1)) {
 		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations ON translations.element_type = 'post_cruise' AND translations.language_code='" . ICL_LANGUAGE_CODE . "' AND translations.element_id = cruises.ID ";
 		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations_default ON translations_default.element_type = 'post_cruise' AND translations_default.language_code='" . get_default_language() . "' AND translations_default.trid = translations.trid ";
-		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations ON translations.element_type = 'post_cabin_type' AND translations.language_code='" . ICL_LANGUAGE_CODE . "' AND translations.element_id = cabin_types.ID ";
-		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations_default ON translations_default.element_type = 'post_cabin_type' AND translations_default.language_code='" . get_default_language() . "' AND translations_default.trid = translations.trid ";
+		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations2 ON translations2.element_type = 'post_cabin_type' AND translations2.language_code='" . ICL_LANGUAGE_CODE . "' AND translations2.element_id = cabin_types.ID ";
+		$sql .= " INNER JOIN " . $wpdb->prefix . "icl_translations translations_default2 ON translations_default2.element_type = 'post_cabin_type' AND translations_default2.language_code='" . get_default_language() . "' AND translations_default2.trid = translations2.trid ";
 	}
 	
 	$sql .= " WHERE cruises.post_status = 'publish' ";
@@ -589,12 +600,21 @@ function create_cruise_schedule($cruise_id, $cabin_type_id, $cabin_count, $start
 	$cruise_id = get_default_language_post_id($cruise_id, 'cruise');
 	$cabin_type_id = get_default_language_post_id($cabin_type_id, 'cabin_type');
 	
-	$sql = "INSERT INTO $table_name_schedule
-			(cruise_id, cabin_type_id, cabin_count, start_date, duration_days, price, price_child, end_date)
-			VALUES
-			(%d, %d, %d, %s, %d, %f, %f, %s);";
+	if ($end_date == null) {
+		$sql = "INSERT INTO $table_name_schedule
+				(cruise_id, cabin_type_id, cabin_count, start_date, duration_days, price, price_child)
+				VALUES
+				(%d, %d, %d, %s, %d, %f, %f);";
+		$sql = $wpdb->prepare($sql, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child);
+	} else {
+		$sql = "INSERT INTO $table_name_schedule
+				(cruise_id, cabin_type_id, cabin_count, start_date, duration_days, price, price_child, end_date)
+				VALUES
+				(%d, %d, %d, %s, %d, %f, %f, %s);";
+		$sql = $wpdb->prepare($sql, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child, $end_date);
+	}
 	
-	$wpdb->query($wpdb->prepare($sql, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child, $end_date));
+	$wpdb->query($sql);
 }
 
 function update_cruise_schedule($schedule_id, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child, $end_date) {
@@ -606,12 +626,20 @@ function update_cruise_schedule($schedule_id, $cruise_id, $cabin_type_id, $cabin
 	
 	$cruise_id = get_default_language_post_id($cruise_id, 'cruise');
 	$cabin_type_id = get_default_language_post_id($cabin_type_id, 'cabin_type');
+
+	if ($end_date == null) {
+		$sql = "UPDATE " . BOOKYOURTRAVEL_CRUISE_SCHEDULE_TABLE . "
+				SET cruise_id=%d, cabin_type_id=%d, cabin_count=%d, start_date=%s, duration_days=%d, price=%f, price_child=%f
+				WHERE Id=%d";
+		$sql = $wpdb->prepare($sql, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child, $schedule_id);
+	} else {
+		$sql = "UPDATE " . BOOKYOURTRAVEL_CRUISE_SCHEDULE_TABLE . "
+				SET cruise_id=%d, cabin_type_id=%d, cabin_count=%d, start_date=%s, duration_days=%d, price=%f, price_child=%f, end_date=%s
+				WHERE Id=%d";
+		$sql = $wpdb->prepare($sql, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child, $end_date, $schedule_id);
+	}
 	
-	$sql = "UPDATE " . BOOKYOURTRAVEL_CRUISE_SCHEDULE_TABLE . "
-			SET cruise_id=%d, cabin_type_id=%d, cabin_count=%d, start_date=%s, duration_days=%d, price=%f, price_child=%f, end_date=%s
-			WHERE Id=%d";
-	
-	$wpdb->query($wpdb->prepare($sql, $cruise_id, $cabin_type_id, $cabin_count, $start_date, $duration_days, $price, $price_child, $end_date, $schedule_id));	
+	$wpdb->query($sql);	
 }
 
 function delete_cruise_schedule($schedule_id) {

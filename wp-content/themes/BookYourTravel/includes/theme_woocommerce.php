@@ -1,23 +1,23 @@
 <?php
 
 if ( ! defined( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_ACCOMMODATIONS' ) )
-    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_ACCOMMODATIONS', 'accommodations' );
+    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_ACCOMMODATIONS', 'accommodations_woo' );
 if ( ! defined( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_TOURS' ) )
-    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_TOURS', 'tours' );
+    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_TOURS', 'tours_woo' );
 if ( ! defined( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CAR_RENTALS' ) )
-    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CAR_RENTALS', 'car-rentals' );
+    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CAR_RENTALS', 'car_rentals_woo' );
 if ( ! defined( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CRUISES' ) )
-    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CRUISES', 'cruises' );
+    define( 'BOOKYOURTRAVEL_WOO_PRODUCT_CAT_CRUISES', 'cruises_woo' );
 	
 /**
  * Check if WooCommerce is active
  **/
-if (is_woocommerce_active()) {
+if (byt_is_woocommerce_active()) {
 	// Put your wocommerce code here
 	add_action('init','byt_woocommerce_init');
 }
 
-function is_woocommerce_active() {
+function byt_is_woocommerce_active() {
 	return ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) );
 }
 
@@ -58,7 +58,7 @@ function byt_woocommerce_init() {
 	add_action('woocommerce_order_status_failed_to_processing', 'byt_woocommerce_handle_woo_payment'); // Add reservetions to Booking System after payment has been completed.
 }
 
-if (is_woocommerce_active()) {
+if (byt_is_woocommerce_active()) {
 	add_action('woocommerce_cart_updated', 'byt_woocommerce_handle_woo_cart_delete_item'); // Delete item from database when is deleted from cart.
 	add_action('woocommerce_add_to_cart', 'byt_woocommerce_add_to_cart_action', 10, 6);
 }

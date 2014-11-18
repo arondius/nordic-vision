@@ -19,7 +19,7 @@
 		<div class="score">
 		<?php 
 			$review_score = $entity_obj->get_custom_field('review_score', false);
-			$score_out_of_10 = ceil($review_score * 10);
+			$score_out_of_10 = round($review_score * 10);
 		?>
 			<span class="achieved"><?php echo $score_out_of_10; ?></span><span> / 10</span>
 			<p class="info"><?php echo sprintf(__('Based on %d reviews', 'bookyourtravel'), $reviews_total); ?></p>

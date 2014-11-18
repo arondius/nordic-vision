@@ -111,6 +111,17 @@ function bookyourtravel_setup() {
 		'after_title' => '</h3>',
 	));
 	
+	// Right Sidebar Widget area for Custom search results
+	register_sidebar(array(
+		'name'=> __('Left Sidebar Search', 'bookyourtravel'),
+		'id'=>'left-search',
+		'description' => __('This Widget area is used for the left sidebar of the custom search results screen', 'bookyourtravel'),
+		'before_widget' => '<li class="widget widget-sidebar">',
+		'after_widget' => '</li>',
+		'before_title' => '<h3>',
+		'after_title' => '</h3>',
+	));
+	
 	// Right Sidebar Widget area for Car rental
 	register_sidebar(array(
 		'name'=> __('Right Sidebar Car rental', 'bookyourtravel'),
@@ -195,10 +206,6 @@ function bookyourtravel_setup() {
 			__( 'BYT Frontend Submit Role', 'bookyourtravel' ),
 			array(
 				'read'         => true,  // true allows this capability
-				'edit_posts'   => true,
-				'publish_posts' => true,
-				'delete_posts' => false,
-				'upload_files' => true,
 			)
 		);
 	}
@@ -209,18 +216,19 @@ add_action( 'after_setup_theme', 'bookyourtravel_setup' );
 function bookyourtravel_init() {
 
 	global $site_url, $current_user, $currency_symbol, $current_currency, $enabled_currencies, $default_currency, $slider_speed, $use_woocommerce_for_checkout, $woo_cart_page_uri;
-	global $logo_src, $my_account_page, $cart_page, $custom_search_results_page, $enable_hotel_search, $enable_tour_search, $enable_self_catered_search, $enable_car_rental_search;
-		
+	global $logo_src, $my_account_page, $cart_page, $custom_search_results_page, $enable_hotel_search, $enable_tour_search, $enable_self_catered_search, $enable_car_rental_search, $enable_cruise_search;
+	
 	$enable_hotel_search = of_get_option('enable_hotel_search', 1);
 	$enable_tour_search = of_get_option('enable_tour_search', 1);
 	$enable_self_catered_search = of_get_option('enable_self_catered_search', 1);
 	$enable_car_rental_search = of_get_option('enable_car_rental_search', 1);
-
+	$enable_cruise_search = of_get_option('enable_cruise_search', 1);
+	
 	$site_url = site_url();
 	
 	$use_woocommerce_for_checkout = 0;
 	$woo_cart_page_uri = '';
-	if (function_exists('wc_get_page_id') && is_woocommerce_active()) {
+	if (function_exists('wc_get_page_id') && byt_is_woocommerce_active()) {
 		$use_woocommerce_for_checkout = of_get_option('use_woocommerce_for_checkout', 0);
 		$use_woocommerce_for_checkout = $use_woocommerce_for_checkout ? 1 : 0;
 		$cart_page_id = wc_get_page_id( 'cart' );
@@ -291,7 +299,7 @@ function bookyourtravel_init_currency() {
 			$enabled_currencies[] = $currency;
 	}
 
-	if ($current_user->ID > 0 && !is_woocommerce_active()){
+	if ($current_user->ID > 0 && !byt_is_woocommerce_active()){
 		$user_currency = get_user_meta($current_user->ID, 'user_currency', true);
 
 		if (!empty($user_currency) && in_array(strtolower($user_currency), $enabled_currencies))
@@ -331,8 +339,19 @@ function bookyourtravel_scripts_styles() {
 	 
 	wp_enqueue_script('jquery');
 
-	wp_register_script('jquery-ui', get_byt_file_uri('/js/jquery-ui.min.js'), false, '1.9.2');
-	wp_enqueue_script('jquery-ui');
+	wp_enqueue_script('jquery-ui-core');
+	wp_enqueue_script('jquery-ui-slider');
+	wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_script('jquery-ui-droppable');
+	wp_enqueue_script('jquery-ui-draggable');
+	wp_enqueue_script('jquery-ui-sortable');
+	wp_enqueue_script('jquery-ui-selectable');
+	wp_enqueue_script('jquery-ui-autocomplete');
+	wp_enqueue_script('jquery-ui-tabs');
+	wp_enqueue_script('jquery-ui-dialog');
+	wp_enqueue_script('jquery-ui-spinner');
+	
+	wp_enqueue_script('jquery-effects-core');
 	
 	wp_enqueue_script( 'bookyourtravel-jquery-validate', get_byt_file_uri ('/js/jquery.validate.min.js'), array('jquery'), '1.0', true );
 
@@ -410,10 +429,25 @@ function bookyourtravel_scripts_styles() {
 	} else if (is_page() ) {
 		wp_register_script( 'frontend-submit', get_byt_file_uri ('/plugins/frontend-submit/frontend-submit.js'), array( 'jquery', 'bookyourtravel-jquery-validate' ), '1.0', true );
 		wp_enqueue_script( 'frontend-submit' );	
+	
+	} 
+
+	if (is_page_template('byt_home.php')) {
+
+		wp_register_script( 'bookyourtravel-search', get_byt_file_uri ('/js/search.js'), array('jquery', 'bookyourtravel-jquery-uniform'), '1.0', true );	
+		wp_enqueue_script( 'bookyourtravel-search' );	
+		
+		wp_localize_script( 'bookyourtravel-search', 'BYTAjax', array( 
+		   'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+		   'nonce'   => wp_create_nonce('byt-ajax-nonce') 
+		) );
+		
+		wp_enqueue_script( 'custom-suggest', get_byt_file_uri ('/js/custom-suggest.js'), array('jquery'), '', true );
+		
 	}
 
 	wp_enqueue_script( 'bookyourtravel-mediaqueries', get_byt_file_uri ('/js/respond.js'), array('jquery'), '1.0', true );
-	wp_enqueue_script( 'bookyourtravel-jquery-uniform', get_byt_file_uri ('/js/jquery.uniform.min.js'), array('jquery', 'jquery-ui'), '1.0', true );
+	wp_enqueue_script( 'bookyourtravel-jquery-uniform', get_byt_file_uri ('/js/jquery.uniform.min.js'), array('jquery', 'jquery-ui-core'), '1.0', true );
 	wp_enqueue_script( 'bookyourtravel-jquery-prettyPhoto', get_byt_file_uri ('/js/jquery.prettyPhoto.js'), array('jquery'), '1.0', true );
 	wp_enqueue_script( 'bookyourtravel-jquery-raty', get_byt_file_uri ('/js/jquery.raty.min.js'), array('jquery'), '1.0', true );
 	wp_enqueue_script( 'bookyourtravel-selectnav', get_byt_file_uri ('/js/selectnav.js'), array('jquery'), '1.0', true );
@@ -454,10 +488,20 @@ add_action( 'wp_enqueue_scripts', 'bookyourtravel_scripts_styles' );
  * @since Book Your Travel 1.0
  */
 function bookyourtravel_admin_scripts_styles() {
-	wp_enqueue_script('jquery');
 
-	wp_register_script('jquery-ui', get_byt_file_uri('/js/jquery-ui.min.js'), false, '1.9.2');
-	wp_enqueue_script('jquery-ui');
+	wp_enqueue_script('jquery');
+	wp_enqueue_script('jquery-effects-core');
+	wp_enqueue_script('jquery-ui-core');
+	wp_enqueue_script('jquery-ui-slider');
+	wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_script('jquery-ui-droppable');
+	wp_enqueue_script('jquery-ui-draggable');
+	wp_enqueue_script('jquery-ui-sortable');
+	wp_enqueue_script('jquery-ui-selectable');
+	wp_enqueue_script('jquery-ui-autocomplete');
+	wp_enqueue_script('jquery-ui-tabs');
+	wp_enqueue_script('jquery-ui-dialog');
+	wp_enqueue_script('jquery-ui-spinner');
 	
 	wp_register_script('byt-admin', get_byt_file_uri('/includes/admin/admin.js'), false, '1.0.0');
 	wp_enqueue_script('byt-admin');

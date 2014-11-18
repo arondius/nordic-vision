@@ -15,7 +15,7 @@
 	$score_out_of_10 = 0;
 	if ($reviews_total > 0) {
 		$review_score = $tour_obj->get_custom_field('review_score', false);
-		$score_out_of_10 = ceil($review_score * 10);
+		$score_out_of_10 = round($review_score * 10);
 	}	
 	
 	$tour_description_html = strip_tags_and_shorten($tour_obj->get_description(), 100) . '<a href="' . $tour_obj->get_permalink() . '">' . __('More info', 'bookyourtravel') . '</a>';

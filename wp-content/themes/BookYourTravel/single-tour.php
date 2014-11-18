@@ -28,6 +28,12 @@ if ( have_posts() ) {
 	$tour_date_from = date('Y-m-d', strtotime("+0 day", time()));
 	$tour_date_from_year = date('Y', strtotime("+0 day", time()));
 	$tour_date_from_month = date('n', strtotime("+0 day", time()));
+
+?>
+	<script>
+		window.postType = 'tour';
+	</script>
+<?php
 	
 	if ($enable_reviews) {
 		get_template_part('includes/parts/review', 'form'); 
@@ -62,14 +68,21 @@ if ( have_posts() ) {
 				if (is_array($tab_array) && count($tab_array) > 0) {
 					foreach ($tab_array as $tab) {
 						if (!isset($tab['hide']) || $tab['hide'] != '1') {
+						
+							$tab_label = '';
+							if (isset($tab['label'])) {
+								$tab_label = $tab['label'];
+								$tab_label = get_translated_dynamic_string(get_option_id_context('tour_tabs') . ' ' . $tab['label'], $tab_label);
+							}
+						
 							if($i==0)
 								$first_display_tab = $tab['id'];
 							if ($tab['id'] == 'reviews' && $enable_reviews) {
-								byt_render_tab("tour", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab['label'] . '">' . $tab['label'] . '</a>');
+								byt_render_tab("tour", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab_label . '">' . $tab_label . '</a>');
 							} elseif ($tab['id'] == 'location' && !empty($tour_map_code)) {
-								byt_render_tab("tour", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab['label'] . '">' . $tab['label'] . '</a>');
+								byt_render_tab("tour", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab_label . '">' . $tab_label . '</a>');
 							} else {
-								byt_render_tab("tour", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab['label'] . '">' . $tab['label'] . '</a>');
+								byt_render_tab("tour", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab_label . '">' . $tab_label . '</a>');
 							}
 						}
 						$i++;
@@ -86,7 +99,7 @@ if ( have_posts() ) {
 			<article>
 				<?php do_action( 'byt_show_single_tour_description_before' ); ?>
 				<?php byt_render_field("text-wrap", "", "", $tour_obj->get_description(), __('General', 'bookyourtravel')); ?>
-				<?php byt_render_tab_extra_fields($tour_extra_fields, 'description', $tour_obj); ?>
+				<?php byt_render_tab_extra_fields('tour_extra_fields', $tour_extra_fields, 'description', $tour_obj); ?>
 				<?php do_action( 'byt_show_single_tour_description_after' ); ?>
 			</article>
 		</section>
@@ -118,7 +131,7 @@ if ( have_posts() ) {
 						?>
 					</div>
 				</form>
-				<?php byt_render_tab_extra_fields($tour_extra_fields, 'availability', $tour_obj); ?>
+				<?php byt_render_tab_extra_fields('tour_extra_fields', $tour_extra_fields, 'availability', $tour_obj); ?>
 				<?php do_action( 'byt_show_single_tour_availability_after' ); ?>
 			</article>
 		</section>
@@ -132,7 +145,7 @@ if ( have_posts() ) {
 				<!--map-->
 				<div class="gmap"><?php echo $tour_map_code; ?></div>
 				<!--//map-->
-				<?php byt_render_tab_extra_fields($tour_extra_fields, 'location', $tour_obj); ?>
+				<?php byt_render_tab_extra_fields('tour_extra_fields', $tour_extra_fields, 'location', $tour_obj); ?>
 				<?php do_action( 'byt_show_single_tour_map_after' ); ?>
 			</article>
 		</section>
@@ -140,72 +153,13 @@ if ( have_posts() ) {
 		<?php } // endif (!empty($tour_map_code)) ?>
 		<?php if ($enable_reviews) { ?>
 		<!--reviews-->
-		<section id="reviews" class="tab-content <?php echo $first_display_tab == 'reviews' ? 'initial' : ''; ?>">
-			<?php do_action( 'byt_show_single_tour_reviews_before' ); ?>
-			<?php
-			$reviews_total = intval( $tour_obj->get_custom_field( 'review_count', false ) );
-			if ($reviews_total > 0) {
+		<section id="reviews" class="tab-content <?php echo $first_display_tab == 'review' ? 'initial' : ''; ?>">
+			<?php 
+			do_action( 'byt_show_single_tour_reviews_before' );
+			get_template_part('includes/parts/review', 'item'); 
+			byt_render_tab_extra_fields('tour_extra_fields', $tour_extra_fields, 'reviews', $tour_obj); 
+			do_action( 'byt_show_single_tour_reviews_after' ); 
 			?>
-			<article>		
-				<h1><?php _e('Tour review scores and score breakdown', 'bookyourtravel'); ?></h1>
-				<div class="score">
-				<?php 
-					$reviews_score = $tour_obj->get_custom_field( 'review_score', false );				
-					$score_out_of_10 = ceil($reviews_score * 10);
-				?>
-					<span class="achieved"><?php echo $score_out_of_10; ?></span><span> / 10</span>
-					<p class="info"><?php echo sprintf(__('Based on %d reviews', 'bookyourtravel'), $reviews_total); ?></p>
-					<p class="disclaimer"><?php sprintf(__('Guest reviews are written by our customers <strong>after their tour</strong> of %s.', 'bookyourtravel'), $tour_obj->get_title()); ?></p>
-				</div>
-				<dl class="chart">
-					<?php 
-					$total_possible = $reviews_total * 10;	
-					$base_tour_id = $tour_obj->get_base_id();				
-					
-					$review_fields = list_review_fields('tour', true);
-					foreach ($review_fields as $review_field) {
-						$field_id = $review_field['id'];
-						$field_label = $review_field['label'];
-						$field_value = intval($total_possible > 0 ? (sum_review_meta_values($base_tour_id, $field_id) / $total_possible) * 10 : 0);
-					?>
-					<dt><?php echo $field_label; ?></dt>
-					<dd><span style="width:<?php echo $field_value * 10; ?>%;"><?php echo $field_value; ?>&nbsp;&nbsp;&nbsp;</span></dd>
-					<?php
-					}
-					?>
-				</dl>
-			</article>
-			<article>
-				<h1><?php _e('Guest reviews', 'bookyourtravel');?></h1>
-				<ul class="reviews">
-					<!--review-->
-					<?php
-					$base_tour_id = $tour_obj->get_base_id();
-					$reviews_query = list_reviews($base_tour_id);
-					while ($reviews_query->have_posts()) : 
-						global $post;
-						$reviews_query->the_post();
-					?>
-					<li>
-						<figure class="left"><?php echo get_avatar( get_the_author_meta( 'ID' ), 70 ); ?></figure>
-						<address><span><?php the_author(); ?></span><br /><?php echo get_the_date('Y-m-d'); ?><br /><br /></address>
-						<div class="pro"><p><?php echo get_post_meta($post->ID, 'review_likes', true); ?></p></div>
-						<div class="con"><p><?php echo get_post_meta($post->ID, 'review_dislikes', true); ?></p></div>
-					</li>
-					<!--//review-->
-					<?php endwhile; 
-						// Reset Second Loop Post Data
-						wp_reset_postdata(); 
-					?>
-				</ul>
-			</article>
-			<?php } else { ?>
-				<article>
-				<h3><?php _e('We are sorry, there are no reviews yet for this tour.', 'bookyourtravel'); ?></h3>
-				</article>
-		<?php } ?>
-		<?php byt_render_tab_extra_fields($tour_extra_fields, 'reviews', $tour_obj); ?>
-		<?php do_action( 'byt_show_single_tour_reviews_after' ); ?>
 		</section>
 		<!--//reviews-->
 		<?php } // if ($enable_reviews) ?>
@@ -216,7 +170,7 @@ if ( have_posts() ) {
 				<section id="<?php echo $tab['id']; ?>" class="tab-content <?php echo ($first_display_tab == $tab['id'] ? 'initial' : ''); ?>">
 					<article>
 						<?php do_action( 'byt_show_single_tour_' . $tab['id'] . '_before' ); ?>
-						<?php byt_render_tab_extra_fields($tour_extra_fields, $tab['id'], $tour_obj); ?>
+						<?php byt_render_tab_extra_fields('tour_extra_fields', $tour_extra_fields, $tab['id'], $tour_obj); ?>
 						<?php do_action( 'byt_show_single_tour_' . $tab['id'] . '_after' ); ?>
 					</article>
 				</section>

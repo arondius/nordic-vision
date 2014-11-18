@@ -367,6 +367,8 @@ function list_available_tour_schedule_entries($tour_id, $from_date, $from_year, 
 	$table_name_schedule = BOOKYOURTRAVEL_TOUR_SCHEDULE_TABLE;
 	$table_name_bookings = BOOKYOURTRAVEL_TOUR_BOOKING_TABLE;
 
+	$yesterday = date('Y-m-d',strtotime("-1 days"));
+
 	if ($tour_type_is_repeated == 0) {
 		// oneoff tours, must have start date in future in order for people to attend
 		$sql = "
@@ -378,12 +380,14 @@ function list_available_tour_schedule_entries($tour_id, $from_date, $from_year, 
 		$sql = $wpdb->prepare($sql, $tour_id, $from_date);
 	} else if ($tour_type_is_repeated == 1) {		
 		// daily tours
-		$sql = "
+		$sql = $wpdb->prepare("
 			SELECT schedule.Id, schedule.price, schedule.price_child, schedule.duration_days, schedule.max_people, date_range.single_date tour_date, num
 			FROM $table_name_schedule schedule
 			LEFT JOIN 
 			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num
+				SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num ", $yesterday);
+				
+		$sql .= "
 				FROM
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -400,12 +404,14 @@ function list_available_tour_schedule_entries($tour_id, $from_date, $from_year, 
 	} else if ($tour_type_is_repeated == 2) {
 	
 		// weekday tours
-		$sql = "
+		$sql = $wpdb->prepare("
 			SELECT schedule.Id, schedule.price, schedule.price_child, schedule.duration_days, schedule.max_people, date_range.single_date tour_date, num
 			FROM $table_name_schedule schedule
 			LEFT JOIN 
 			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num
+				SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num ", $yesterday);
+		
+		$sql .= "
 				FROM
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -421,12 +427,14 @@ function list_available_tour_schedule_entries($tour_id, $from_date, $from_year, 
 	} else if ($tour_type_is_repeated == 3) {
 		
 		// weekly tours
-		$sql = "
+		$sql = $wpdb->prepare("
 			SELECT schedule.Id, schedule.price, schedule.price_child, schedule.duration_days, schedule.max_people, date_range.single_date tour_date, num
 			FROM $table_name_schedule schedule
 			LEFT JOIN 
 			(
-				SELECT ADDDATE('1970-01-01',t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num
+				SELECT ADDDATE(%s,t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) single_date, (t1.i*10 + t0.i) num ", $yesterday);
+				
+		$sql .= "
 				FROM
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t0,
 				(SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) t1,
@@ -583,16 +591,24 @@ function create_tour_schedule($tour_id, $start_date, $duration_days, $price, $pr
 	global $wpdb;
 	
 	$table_name_schedule = BOOKYOURTRAVEL_TOUR_SCHEDULE_TABLE;
-	$table_name_bookings = BOOKYOURTRAVEL_TOUR_BOOKING_TABLE;
 	
 	$tour_id = get_default_language_post_id($tour_id, 'tour');
 	
-	$sql = "INSERT INTO $table_name_schedule
-			(tour_id, start_date, duration_days, price, price_child, max_people, end_date)
-			VALUES
-			(%d, %s, %d, %f, %f, %d, %s);";
+	if ($end_date == null) {
+		$sql = "INSERT INTO $table_name_schedule
+				(tour_id, start_date, duration_days, price, price_child, max_people)
+				VALUES
+				(%d, %s, %d, %f, %f, %d);";
+		$sql = $wpdb->prepare($sql, $tour_id, $start_date, $duration_days, $price, $price_child, $max_people);
+	} else {
+		$sql = "INSERT INTO $table_name_schedule
+				(tour_id, start_date, duration_days, price, price_child, max_people, end_date)
+				VALUES
+				(%d, %s, %d, %f, %f, %d, %s);";
+		$sql = $wpdb->prepare($sql, $tour_id, $start_date, $duration_days, $price, $price_child, $max_people, $end_date);
+	}
 	
-	$wpdb->query($wpdb->prepare($sql, $tour_id, $start_date, $duration_days, $price, $price_child, $max_people, $end_date));
+	$wpdb->query($sql);
 }
 
 function update_tour_schedule($schedule_id, $start_date, $duration_days, $tour_id, $price, $price_child, $max_people, $end_date) {
@@ -600,15 +616,22 @@ function update_tour_schedule($schedule_id, $start_date, $duration_days, $tour_i
 	global $wpdb;
 	
 	$table_name_schedule = BOOKYOURTRAVEL_TOUR_SCHEDULE_TABLE;
-	$table_name_bookings = BOOKYOURTRAVEL_TOUR_BOOKING_TABLE;
 	
 	$tour_id = get_default_language_post_id($tour_id, 'tour');
+
+	if ($end_date == null) {
+		$sql = "UPDATE " . BOOKYOURTRAVEL_TOUR_SCHEDULE_TABLE . "
+				SET start_date=%s, duration_days=%d, tour_id=%d, price=%f, price_child=%f, max_people=%d
+				WHERE Id=%d";
+		$sql = $wpdb->prepare($sql, $start_date, $duration_days, $tour_id, $price, $price_child, $max_people, $schedule_id);
+	} else {
+		$sql = "UPDATE " . BOOKYOURTRAVEL_TOUR_SCHEDULE_TABLE . "
+				SET start_date=%s, duration_days=%d, tour_id=%d, price=%f, price_child=%f, max_people=%d, end_date=%s
+				WHERE Id=%d";
+		$sql = $wpdb->prepare($sql, $start_date, $duration_days, $tour_id, $price, $price_child, $max_people, $end_date, $schedule_id);
+	}
 	
-	$sql = "UPDATE " . BOOKYOURTRAVEL_TOUR_SCHEDULE_TABLE . "
-			SET start_date=%s, duration_days=%d, tour_id=%d, price=%f, price_child=%f, max_people=%d, end_date=%s
-			WHERE Id=%d";
-	
-	$wpdb->query($wpdb->prepare($sql, $start_date, $duration_days, $tour_id, $price, $price_child, $max_people, $end_date, $schedule_id));	
+	$wpdb->query($sql);	
 }
 
 function delete_tour_schedule($schedule_id) {

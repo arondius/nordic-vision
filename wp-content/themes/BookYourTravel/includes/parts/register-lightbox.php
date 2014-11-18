@@ -27,6 +27,8 @@
 					<div class="f-item">
 						<label for="user_email"><?php _e('Email', 'bookyourtravel'); ?></label>
 						<input tabindex="28" type="email" id="user_email" name="user_email" />
+						<input type="hidden" name="email" id="email" value="" />
+						<input type="hidden" name="password" id="password" value="" />
 					</div>
 					<?php if ($add_captcha_to_forms) { ?>
 					<div class="row captcha">

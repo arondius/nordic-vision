@@ -23,7 +23,6 @@
 	<script type="text/javascript">
 		window.themePath = '<?php echo get_template_directory_uri(); ?>';
 	</script>
-	<?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
 	<script type="text/javascript">
 <?php
 	global $site_url, $current_user, $currency_symbol, $current_currency, $default_currency, $enabled_currencies, $use_woocommerce_for_checkout, $woo_cart_page_uri;
@@ -48,7 +47,9 @@
 
 	if ($current_user->ID > 0){	?>
 		window.currentUserId = '<?php echo $current_user->ID;?>';
-	<?php } ?>	
+	<?php } else { ?>	
+		window.currentUserId = 0;
+	<?php } ?>
 		window.site_url = '<?php echo $site_url; ?>';
 		window.useWoocommerceForCheckout = <?php echo (isset($use_woocommerce_for_checkout) ? $use_woocommerce_for_checkout : 0); ?>;
 
@@ -105,7 +106,7 @@
 						<li><a class="fn" href="<?php echo wp_logout_url(home_url()); ?>"><?php _e('Logout', 'bookyourtravel'); ?></a></li>
 						<?php } ?>
 					</ul>
-					<?php if (!is_woocommerce_active()) {?>
+					<?php if (!byt_is_woocommerce_active()) {?>
 					<ul class="currency-nav">
 					<?php
 						foreach ($enabled_currencies as $key => $value) {

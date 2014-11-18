@@ -7,7 +7,7 @@ class byt_cabin_type extends byt_entity
     }
 
 	public function get_facilities() {
-		return wp_get_post_terms($this->get_id(), 'facility', array('orderby' => 'name', 'order' => 'ASC', 'fields' => 'all'));	
+		return wp_get_post_terms($this->get_base_id(), 'facility', array('orderby' => 'name', 'order' => 'ASC', 'fields' => 'all'));	
 	}
 	
 	public function get_facilities_string() {

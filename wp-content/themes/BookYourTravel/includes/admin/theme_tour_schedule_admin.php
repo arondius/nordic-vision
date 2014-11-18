@@ -547,9 +547,9 @@ class tour_schedule_admin_list_table extends WP_List_Table {
 		}
 		
 		$end_date = null;
-		if (isset($_POST['end_date']))
+		if (isset($_POST['end_date'])) {
 			$end_date =  wp_kses($_POST['end_date'], '');
-		else if ($schedule_object != null) {
+		} else if ($schedule_object != null) {
 			$end_date = $schedule_object->end_date;
 		}
 		

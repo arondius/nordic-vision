@@ -12,12 +12,12 @@ class byt_accommodation extends byt_entity
 	}
 	
     public function get_type_name() {	
-		$type_objs = wp_get_post_terms( $this->get_id(), 'accommodation_type', array( "fields" => "all" ) );
+		$type_objs = wp_get_post_terms( $this->get_base_id(), 'accommodation_type', array( "fields" => "all" ) );
 		return $type_objs ? $type_objs[0]->name : '';
     }
 	
     public function get_type_id() {	
-		$type_objs = wp_get_post_terms( $this->get_id(), 'accommodation_type', array( "fields" => "all" ) );
+		$type_objs = wp_get_post_terms( $this->get_base_id(), 'accommodation_type', array( "fields" => "all" ) );
 		return $type_objs ? $type_objs[0]->term_id : null;
     }
 	
@@ -38,7 +38,7 @@ class byt_accommodation extends byt_entity
 	}
 	
 	public function get_facilities() {
-		return wp_get_post_terms($this->get_id(), 'facility', array('orderby' => 'name', 'order' => 'ASC', 'fields' => 'all'));	
+		return wp_get_post_terms($this->get_base_id(), 'facility', array('orderby' => 'name', 'order' => 'ASC', 'fields' => 'all'));	
 	}
 	
 	public function get_field_value($field_name, $use_prefix = true) {

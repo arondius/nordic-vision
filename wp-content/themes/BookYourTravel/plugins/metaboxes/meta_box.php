@@ -407,7 +407,15 @@ function meta_box_sanitize( $string, $function = 'sanitize_text_field' ) {
 		'p' => array(),
 		'br' => array(),
 		'hr' => array(),
-		'div' => array()
+		'div' => array('class' => true),
+		'span' => array('class' => true),
+		'img' => array(
+			'src' => true, 
+			'alt' => true, 
+			'class' => true, 
+			'width' => true, 
+			'height' => true
+		)
 	);
 
 	switch ( $function ) {

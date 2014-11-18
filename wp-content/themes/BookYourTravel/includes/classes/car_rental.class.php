@@ -12,7 +12,7 @@ class byt_car_rental extends byt_entity
 	}
 	
     public function get_type_name() {	
-		$type_objs = wp_get_post_terms( $this->get_id(), 'car_type', array( "fields" => "all" ) );
+		$type_objs = wp_get_post_terms( $this->get_base_id(), 'car_type', array( "fields" => "all" ) );
 		return $type_objs ? $type_objs[0]->name : '';
     }
 	

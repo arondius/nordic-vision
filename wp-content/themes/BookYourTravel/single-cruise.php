@@ -22,6 +22,12 @@ if ( have_posts() ) {
 	$cruise_date_from = date('Y-m-d', strtotime("+0 day", time()));
 	$cruise_date_from_year = date('Y', strtotime("+0 day", time()));
 	$cruise_date_from_month = date('n', strtotime("+0 day", time()));
+
+?>
+	<script>
+		window.postType = 'cruise';
+	</script>
+<?php
 	
 	if ($enable_reviews) {
 		get_template_part('includes/parts/review', 'form'); 
@@ -55,13 +61,21 @@ if ( have_posts() ) {
 				$i = 0;
 				if (is_array($tab_array) && count($tab_array) > 0) {
 					foreach ($tab_array as $tab) {
+					
 						if (!isset($tab['hide']) || $tab['hide'] != '1') {
+					
+							$tab_label = '';
+							if (isset($tab['label'])) {
+								$tab_label = $tab['label'];
+								$tab_label = get_translated_dynamic_string(get_option_id_context('cruise_tabs') . ' ' . $tab['label'], $tab_label);
+							}
+						
 							if($i==0)
 								$first_display_tab = $tab['id'];
 							if ($tab['id'] == 'reviews' && $enable_reviews) {
-								byt_render_tab("cruise", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab['label'] . '">' . $tab['label'] . '</a>');
+								byt_render_tab("cruise", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab_label . '">' . $tab_label . '</a>');
 							} else {
-								byt_render_tab("cruise", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab['label'] . '">' . $tab['label'] . '</a>');
+								byt_render_tab("cruise", $tab['id'], '',  '<a href="#' . $tab['id'] . '" title="' . $tab_label . '">' . $tab_label . '</a>');
 							}
 						}
 						$i++;
@@ -78,7 +92,7 @@ if ( have_posts() ) {
 			<article>
 				<?php do_action( 'byt_show_single_cruise_description_before' ); ?>
 				<?php byt_render_field("text-wrap", "", "", $cruise_obj->get_description(), __('General', 'bookyourtravel')); ?>
-				<?php byt_render_tab_extra_fields($cruise_extra_fields, 'description', $cruise_obj); ?>
+				<?php byt_render_tab_extra_fields('cruise_extra_fields', $cruise_extra_fields, 'description', $cruise_obj); ?>
 				<?php do_action( 'byt_show_single_cruise_description_after' ); ?>
 			</article>
 		</section>
@@ -165,7 +179,7 @@ if ( have_posts() ) {
 						?>
 					</div>
 				</form>
-				<?php byt_render_tab_extra_fields($cruise_extra_fields, 'availability', $cruise_obj); ?>
+				<?php byt_render_tab_extra_fields('cruise_extra_fields', $cruise_extra_fields, 'availability', $cruise_obj); ?>
 				<?php do_action( 'byt_show_single_cruise_availability_after' ); ?>
 
 			</article>
@@ -189,7 +203,7 @@ if ( have_posts() ) {
 					</ul>
 				</div>
 				<?php } // endif (!empty($facilities)) ?>			
-				<?php byt_render_tab_extra_fields($cruise_extra_fields, 'facilities', $cruise_obj); ?>			
+				<?php byt_render_tab_extra_fields('cruise_extra_fields', $cruise_extra_fields, 'facilities', $cruise_obj); ?>			
 				<?php do_action( 'byt_show_single_cruise_facilites_after' ); ?>
 			</article>
 		</section>
@@ -200,7 +214,7 @@ if ( have_posts() ) {
 			<?php 
 			do_action( 'byt_show_single_cruise_reviews_before' );
 			get_template_part('includes/parts/review', 'item'); 
-			byt_render_tab_extra_fields($cruise_extra_fields, 'reviews', $cruise_obj); 
+			byt_render_tab_extra_fields('cruise_extra_fields', $cruise_extra_fields, 'reviews', $cruise_obj); 
 			do_action( 'byt_show_single_cruise_reviews_after' ); 
 			?>
 		</section>
@@ -213,7 +227,7 @@ if ( have_posts() ) {
 				<section id="<?php echo $tab['id']; ?>" class="tab-content <?php echo ($first_display_tab == $tab['id'] ? 'initial' : ''); ?>">
 					<article>
 						<?php do_action( 'byt_show_single_cruise_' . $tab['id'] . '_before' ); ?>
-						<?php byt_render_tab_extra_fields($cruise_extra_fields, $tab['id'], $cruise_obj); ?>
+						<?php byt_render_tab_extra_fields('cruise_extra_fields', $cruise_extra_fields, $tab['id'], $cruise_obj); ?>
 						<?php do_action( 'byt_show_single_cruise_' . $tab['id'] . '_after' ); ?>
 					</article>
 				</section>

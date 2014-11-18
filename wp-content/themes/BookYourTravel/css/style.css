@@ -49,6 +49,7 @@ table { border-collapse: collapse; border-spacing:0;}
 /* LAYOUT */
 header   {background:#fff;width:100%;float:left;margin:0 0 20px;}
 .home header  {position:absolute;top:0;left:0;z-index:99999;}
+.home.admin-bar header {top:32px;}
 .main   {float:left;width:100%;min-height:730px;padding:0 0 75px;background:#E9E6E0 url(../images/bgr/body.jpg) 0 0 repeat;display:inline-block;}
 footer   {float:left;background:#fff;width:100%;padding:23px 0;-webkit-box-shadow:0 0 2px rgba(0,0,0,0.2);-moz-box-shadow:0 0 2px rgba(0,0,0,0.2);box-shadow:0 0 2px rgba(0,0,0,0.2);}
 .wrap  {width: 100%;max-width: 1140px;margin:0 auto;text-align:left;position:relative;}
@@ -401,7 +402,6 @@ section .one-fourth   				 {float:left;width:23.5%;margin:0 2% 20px 0;}
 .more-information {float:left;display:block;width:100%;margin:20px 0 -11px;}
 
 .three-col li   {float:left;width:28%;margin:0 2% 0 0;}
-.three-col li.last  {margin:0;}
 
 #location article,
 #tour_location article  {padding:2%;width:96%;}
@@ -457,14 +457,14 @@ section .one-fourth   				 {float:left;width:23.5%;margin:0 2% 20px 0;}
  
 /*CONTACT US*/ 
 
-.map-wrap   {width:97%;padding:1.5%;background:#fff;webkit-box-shadow:0 0 2px rgba(0,0,0,0.1);-moz-box-shadow:0 0 2px rgba(0,0,0,0.1);box-shadow:0 0 2px rgba(0,0,0,0.1);}
-.map-wrap .infoBox {background:url(../images/bgr/map-popup.png) no-repeat !important;width:180px !important;height:100px !important;background-size:contain;}
-.gmap     {border:1px solid #ccc;display:block;width:100%;height:550px;}
-.gmap .infoBox  {background:url(../images/bgr/map-popup-hotel.png) no-repeat;width:184px;height:120px;background-size:contain;}
-.gmap strong   {font:normal 14px 'OpenSansExtrabold';margin:0 0 13px;display:inline-block;}
-.infoBox   {font:normal 12px/1.42 'OpenSansRegular';margin:-100px 0 0 50px;display:inline-block;padding: 8px 10px;color:#fff;}
-#map_canvas img      {max-width: none;}
-#map_canvas label   {width: auto; display:inline;} 
+.map-wrap   				{width:97%;padding:1.5%;background:#fff;webkit-box-shadow:0 0 2px rgba(0,0,0,0.1);-moz-box-shadow:0 0 2px rgba(0,0,0,0.1);box-shadow:0 0 2px rgba(0,0,0,0.1);}
+.map-wrap .infoBox 		{background:url(../images/bgr/map-popup.png) no-repeat !important;width:180px !important;height:100px !important;background-size:contain;}
+.gmap    					{border:1px solid #ccc;display:block;width:100%;height:550px;}
+.gmap .infoBox  			{background:url(../images/bgr/map-popup-hotel.png) no-repeat;width:184px;height:120px;background-size:contain;}
+.gmap strong   			{font:normal 14px 'OpenSansExtrabold';margin:0 0 13px;display:inline-block;width:100%;}
+.infoBox   				{font:normal 12px/1.42 'OpenSansRegular';margin:-100px 0 0 50px;display:inline-block;padding: 8px 10px;color:#fff;}
+#map_canvas img      		{max-width: none;}
+#map_canvas label   		{width: auto; display:inline;} 
 .gm-style div, .gm-style span, .gm-style label, .gm-style a {font-family:Arial,Helvetica,sans-serif !important; }
 
 /*GET INSPIRED*/
@@ -666,18 +666,22 @@ aside .default    {padding:14px 7% 5px;width:86%;}
 
 /*REFINE SEARCH RESULTS*/
 .refine-search-results form   {padding:0;}
-.refine-search-results dl   {margin:-16px 0 15px;border-bottom:1px solid #ccc;}
+.refine-search-results dl   {margin:0 0 15px;border-bottom:1px solid #ccc;}
 .refine-search-results dt   {font:normal 13px 'OpenSansBold';letter-spacing:-0.02em;color:#666;border-top:1px solid #ccc;padding:12px 0;background:url(../images/ico/arrow-right.png) 100% 15px no-repeat;cursor:pointer;}
 .refine-search-results dt.active  {background:url(../images/ico/arrow-down.png) 100% 16px no-repeat;}
-.refine-search-results dd   {padding:0 0 7px;}
+.refine-search-results dd   {padding:0 0 15px;}
 .refine-search-results .checkbox  {display:block;width:100%;padding:0 0 5px;}
 .refine-search-results .checkbox label {font-size:12px;padding:0 0 0 5px;}
 .refine-search-results dd span.min  {font-size:12px;margin:5px 0 8px;display:inline-block;}
 .refine-search-results dd span.max  {font-size:12px;float:right;margin:5px 0 8px;display:inline-block;}
-.refine-search-results .f-item span  {float:left;width:100%;padding:0 0 8px;}
-#star        {margin:0 0 8px;}
-#star img       {display:inline;}
+.refine-search-results .f-item span,
+.refine-search-results .datepicker label {float:left;width:100%;padding:0 0 8px;}
+.refine-search-results .datepicker	{padding:0 0 8px;}
+#star, .search_widget_star        {margin:0 0 8px;}
+#star img, .search_widget_star img       {display:inline;}
 .stars-info        {float:right;font-size:12px;line-height:24px;}
+.refine-search-results .gradient-button {width:100%;}
+
 
 /*BOOKING DETAILS*/
 .booking-details  h1    {font-size:20px;color:#666;padding:0 0 3px;-webkit-text-shadow:none;-moz-text-shadow:none;text-shadow:none;}
@@ -767,6 +771,7 @@ input.error,textarea.error  {border-color:red !important;}
 label.error {color:red !important;padding:5px 0 0;}
 div.error p,p.error {color:red !important;}
 textarea:invalid {outline:none;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none;}
+p.success {color:#2DB200 !important;}
 
 /*FRONT END SUBMISSION*/
 .fes-input-wrapper				 			{float:left;width:100%;padding:0 0 15px;position:relative;}
@@ -836,13 +841,25 @@ span.private								{color:#BAACA3;}
 
 .spinner     {position:relative;}
 .main-search .f-item  .ui-spinner-input  {padding:6px 10%;width:100%;}
-.ui-icon-triangle-1-n {position:absolute;top:35px;right:8px;background:url(../images/ico/spinner.png) 0 0 no-repeat;width:13px;height:8px;overflow:hidden;text-indent:-99999px;display:inline-block;cursor:pointer;}
-.ui-icon-triangle-1-s {position:absolute;top:43px;right:8px;background:url(../images/ico/spinner.png) 0 -9px no-repeat;width:13px;height:8px;overflow:hidden;text-indent:-99999px;display:inline-block;cursor:pointer;}
+.ui-icon-triangle-1-n,.ui-spinner-up 	{position:absolute;top:35px;right:8px;background:url(../images/ico/spinner.png) 0 0 no-repeat !important;width:13px;height:8px;overflow:hidden;text-indent:-99999px;display:inline-block;cursor:pointer;}
+.ui-icon-triangle-1-s,.ui-spinner-down 	{position:absolute;top:43px;right:8px;background:url(../images/ico/spinner.png) 0 -9px no-repeat !important;width:13px;height:8px;overflow:hidden;text-indent:-99999px;display:inline-block;cursor:pointer;}
+
+.widget-search .ui-spinner-up  	{top:9px;}
+.widget-search .ui-spinner-down  	{top:17px;}
 
 .spinner.small  {width:43% !important;}
 
-.search-submit    {position:absolute;left:478px;bottom:-5px;background:url(../images/bgr/search-button.png) 0 0 no-repeat;width:204px;height:34px;border:none;font:normal 12px/34px 'OpenSansBold';text-transform:uppercase;color:#fff;-webkit-text-shadow:0 -1px 0 rgba(0,0,0,0.2);-moz-text-shadow:0 -1px 0 rgba(0,0,0,0.2);text-shadow:0 -1px 0 rgba(0,0,0,0.2);}
-.search-submit:hover  {background-position:0 -34px;}
+.search-submit    		{position:absolute;left:478px;bottom:-5px;background:url(../images/bgr/search-button.png) 0 0 no-repeat;width:204px;height:34px;border:none;font:normal 12px/34px 'OpenSansBold';text-transform:uppercase;color:#fff;-webkit-text-shadow:0 -1px 0 rgba(0,0,0,0.2);-moz-text-shadow:0 -1px 0 rgba(0,0,0,0.2);text-shadow:0 -1px 0 rgba(0,0,0,0.2);}
+.search-submit:hover  	{background-position:0 -34px;}
+
+.f-item,.destination 				{position:relative;}
+.suggest-results 					{position:absolute;z-index:9999;left:0 !important;top:57px !important;width:100%;background:#f5f5f5;-webkit-box-shadow:5px 5px 5px rgba(0,0,0,.3);-moz-box-shadow:5px 5px 5px rgba(0,0,0,.3);box-shadow:5px 5px 5px rgba(0,0,0,.3);}
+.suggest-results li 					{padding:3px 4%;cursor:pointer;}
+.suggest-results li:hover				{color:#111;}
+.suggest-results li:first-child		{padding-top:10px;}
+.suggest-results li:last-child 		{padding-bottom:10px;}
+
+.destination .suggest-results {background:#fff;top:31px !important;}
 
 /*3col form*/
 .forms.first {width:100%;}
@@ -1359,7 +1376,7 @@ aside figure img,
 .tab-content .deals .full-width .price em 	{display:inline;width:auto;}
 .tab-content .deals .full-width .details  {width:94%;padding:0 3% 20px;}
 .tab-content .deals .full-width .description {width:100%;height:auto;margin:0;}
-.tab-content .deals .full-width .gradient-button {top:auto;bottom:auto;right:20px;}
+.tab-content .deals .full-width .gradient-button {top:20px;bottom:auto;right:20px;left:auto;max-width:80px;}
 
 .output p { width: 40%;}
 .footer-sidebar    {border:none;}
